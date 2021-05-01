@@ -1,8 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
+import { Link } from "react-router-dom";
 
 export default function CreateUser() {
+  const formRef = useRef();
   const usernameRef = useRef();
   const contactRef = useRef();
   const emailRef = useRef();
@@ -10,6 +12,7 @@ export default function CreateUser() {
 
   const { signUp } = useAuth();
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   async function handleSubmit(e) {
@@ -18,13 +21,15 @@ export default function CreateUser() {
 
     try {
       setError("");
+      setMessage("");
       setLoading(true);
-      await signUp(
-        emailRef.current.value,
-        `pwd@${contactRef.current.value}`
-      );
-    } catch {
-      setError("Failed to create user account");
+      await signUp(emailRef.current.value, `pwd@${contactRef.current.value}`);
+      setMessage("User Created Successfully !!");
+      formRef.current.reset();
+    } catch (error) {
+      console.log(error.code);
+      setMessage("");
+      setError(error.message);
     }
     setLoading(false);
   }
@@ -34,7 +39,8 @@ export default function CreateUser() {
       <Card.Body>
         <h3 className="text-center mb-4">Create Internal User</h3>
         {error && <Alert variant="danger">{error}</Alert>}
-        <Form onSubmit={handleSubmit}>
+        {message && <Alert variant="success">{message}</Alert>}
+        <Form onSubmit={handleSubmit} ref={formRef}>
           <Form.Group id="username">
             <Form.Label>User Name</Form.Label>
             <Form.Control type="text" ref={usernameRef} required />
@@ -69,6 +75,10 @@ export default function CreateUser() {
             Create new user
           </Button>
         </Form>
+
+        <div className="w-100 text-center mt-3">
+          <Link to="/">Dashboard</Link>
+        </div>
       </Card.Body>
     </Card>
   );
