@@ -1,6 +1,5 @@
 import React, { useContext, useState, useEffect } from "react";
-
-import { auth } from "../firebase";
+import { auth } from "../backend/firebase";
 
 const AuthContext = React.createContext();
 
@@ -9,9 +8,10 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }) {
-  const [authUser, setAuthUser] = useState();
+  const [authUser, setAuthUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const [updateUser, setUpdateUser] = useState(false);
+  const [loggedInUser, setLoggedInUser] = useState(null);
 
   function signUp(email, password) {
     console.log("signUp in called");
@@ -42,6 +42,11 @@ export function AuthProvider({ children }) {
     return auth.sendPasswordResetEmail(email);
   }
 
+  function persistLoggedInUserData(userDoc) {
+    console.log("persistLoggedInUserData");
+    setLoggedInUser(userDoc);
+  }
+
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged((user) => {
       console.log("onAuthStateChanged");
@@ -56,10 +61,12 @@ export function AuthProvider({ children }) {
 
   const actions = {
     authUser: authUser,
+    loggedInUser,
     signUp,
     signIn,
     signOut,
     resetPassword,
+    persistLoggedInUserData,
   };
 
   return (

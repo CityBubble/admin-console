@@ -2,12 +2,14 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { Link, useHistory } from "react-router-dom";
+import { useDataStore } from "../backend/datastore";
 
 export default function Login() {
   const emailRef = useRef();
   const pwdRef = useRef();
 
-  const { signIn } = useAuth();
+  const { signIn, persistLoggedInUserData, signOut } = useAuth();
+  const { getUserData } = useDataStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -15,16 +17,29 @@ export default function Login() {
   async function handleLogin(e) {
     console.log("handle login submit");
     e.preventDefault();
-
+    setError("");
+    setLoading(true);
+    let forceLogOut = false;
     try {
-      setError("");
-      setLoading(true);
-      await signIn(emailRef.current.value, pwdRef.current.value);
-      console.log("login successfull");
-      history.push("/");
+      const { user } = await signIn(
+        emailRef.current.value,
+        pwdRef.current.value
+      );
+      forceLogOut = true;
+      const userDoc = await getUserData(user);
+      if (userDoc) {
+        persistLoggedInUserData(userDoc);
+        console.log("login successfull");
+        history.push("/");
+      }
     } catch (error) {
       console.log(error.code);
       setError(error.message);
+
+      if (forceLogOut) {
+        console.log("FORCE SIGN OUT");
+        signOut();
+      }
     }
     setLoading(false);
   }

@@ -30,7 +30,6 @@ export default function CreateUser() {
         emailRef.current.value,
         `pwd@${contactRef.current.value}`
       );
-      console.log(user);
       await generateUser(user, {
         username: usernameRef.current.value,
         contact: contactRef.current.value,

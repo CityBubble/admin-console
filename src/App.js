@@ -1,11 +1,11 @@
-import CreateUser from "./CreateUser";
+import CreateUser from "./components/CreateUser";
 import { Container } from "react-bootstrap";
-import { AuthProvider } from "../context/AuthContext";
+import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Login from "./Login";
-import Dashboard from "./Dashboard";
-import SecureRoute from "../Route/SecureRoute";
-import PasswordReset from "./PasswordReset";
+import Login from "./components/Login";
+import Dashboard from "./components/Dashboard";
+import SecureRoute from "./Route/SecureRoute";
+import PasswordReset from "./components/PasswordReset";
 
 function App() {
   return (
