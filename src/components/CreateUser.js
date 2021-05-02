@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import { useDataStore } from "../backend/datastore";
 
 export default function CreateUser() {
   const formRef = useRef();
@@ -14,20 +15,30 @@ export default function CreateUser() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
+  const { generateUser } = useDataStore();
 
-  async function handleSubmit(e) {
+  async function handleCreateUserSubmit(e) {
     console.log("handle submit");
     e.preventDefault();
 
+    setError("");
+    setMessage("");
+    setLoading(true);
+
     try {
-      setError("");
-      setMessage("");
-      setLoading(true);
-      await signUp(emailRef.current.value, `pwd@${contactRef.current.value}`);
+      const { user } = await signUp(
+        emailRef.current.value,
+        `pwd@${contactRef.current.value}`
+      );
+      console.log(user);
+      await generateUser(user, {
+        username: usernameRef.current.value,
+        contact: contactRef.current.value,
+        role: roleRef.current.value,
+      });
       setMessage("User Created Successfully !!");
       formRef.current.reset();
     } catch (error) {
-      console.log(error.code);
       setMessage("");
       setError(error.message);
     }
@@ -40,7 +51,7 @@ export default function CreateUser() {
         <h3 className="text-center mb-4">Create Internal User</h3>
         {error && <Alert variant="danger">{error}</Alert>}
         {message && <Alert variant="success">{message}</Alert>}
-        <Form onSubmit={handleSubmit} ref={formRef}>
+        <Form onSubmit={handleCreateUserSubmit} ref={formRef}>
           <Form.Group id="username">
             <Form.Label>User Name</Form.Label>
             <Form.Control type="text" ref={usernameRef} required />
@@ -67,7 +78,7 @@ export default function CreateUser() {
             <Form.Control as="select" ref={roleRef} required>
               <option value="reviewer">Reviewer</option>
               <option value="admin">Admin</option>
-              <option value="super-admin">Super-Admin</option>
+              <option value="master">Master</option>
             </Form.Control>
           </Form.Group>
 

@@ -41,7 +41,7 @@ export default function Login() {
               type="email"
               ref={emailRef}
               required
-              autoComplete="on"
+              autoComplete="off"
               defaultValue="raghavaneja92@gmail.com"
             />
           </Form.Group>
