@@ -9,7 +9,7 @@ export default function Login() {
   const pwdRef = useRef();
 
   const { signIn, persistLoggedInUserData, signOut } = useAuth();
-  const { getUserData } = useDataStore();
+  const { getAuthUserData } = useDataStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();
@@ -26,7 +26,7 @@ export default function Login() {
         pwdRef.current.value
       );
       forceLogOut = true;
-      const userDoc = await getUserData(user);
+      const userDoc = await getAuthUserData(user);
       if (userDoc) {
         persistLoggedInUserData(userDoc);
         console.log("login successfull");

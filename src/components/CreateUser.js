@@ -53,7 +53,7 @@ export default function CreateUser() {
         <Form onSubmit={handleCreateUserSubmit} ref={formRef}>
           <Form.Group id="username">
             <Form.Label>User Name</Form.Label>
-            <Form.Control type="text" ref={usernameRef} required />
+            <Form.Control type="text" ref={usernameRef} minLength="3" maxLength="20" required />
           </Form.Group>
 
           <Form.Group id="contact">

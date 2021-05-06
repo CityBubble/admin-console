@@ -6,6 +6,7 @@ import Login from "./components/Login";
 import Dashboard from "./components/Dashboard";
 import SecureRoute from "./Route/SecureRoute";
 import PasswordReset from "./components/PasswordReset";
+import ModifyUser from "./components/ModifyUser";
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               <SecureRoute exact path="/" component={Dashboard} />
               <Route path="/login" component={Login} />
               <SecureRoute path="/createUser" component={CreateUser} />
+              <SecureRoute path="/modifyUser" component={ModifyUser} />
               <Route path="/forgot-password" component={PasswordReset} />
             </Switch>
           </AuthProvider>

@@ -33,6 +33,9 @@ export default function Dashboard() {
         <Link to="/createUser" className="btn btn-primary w-100 mt-3">
           Create Internal User
         </Link>
+        <Link to="/modifyUser" className="btn btn-secondary w-100 mt-3">
+          Modify Internal User
+        </Link>
         <hr />
         <Button className="w-100 btn-danger" onClick={handleLogOut}>
           Log Out
