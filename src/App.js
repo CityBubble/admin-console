@@ -9,6 +9,7 @@ import PasswordReset from "./components/PasswordReset";
 import ModifyUser from "./components/ModifyUser";
 import VendorActions from "./components/VendorActions";
 import InternalUsers from "./components/InternalUsers";
+import ViewVendors from "./components/ViewVendors";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
               <SecureRoute path="/createUser" component={CreateUser} />
               <SecureRoute path="/modifyUser" component={ModifyUser} />
               <SecureRoute path="/vendors" component={VendorActions} />
+              <SecureRoute path="/view_vendors" component={ViewVendors} />
             </Switch>
           </AuthProvider>
         </Router>

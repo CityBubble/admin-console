@@ -1,4 +1,4 @@
-import React from 'react'
+import React from "react";
 import { Card } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
@@ -6,7 +6,7 @@ export default function VendorActions() {
   return (
     <Card>
       <Card.Body>
-        <Link to="/createUser" className="btn btn-primary w-100 mt-3">
+        <Link to="/view_vendors" className="btn btn-primary w-100 mt-3">
           View All Vendors
         </Link>
 

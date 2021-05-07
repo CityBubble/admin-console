@@ -78,7 +78,7 @@ export default function CreateUser() {
             <Form.Control type="email" ref={emailRef} required />
           </Form.Group>
 
-          <Form.Group id="uerRole">
+          <Form.Group id="userRole">
             <Form.Label>Assign Role</Form.Label>
             <Form.Control as="select" ref={roleRef} required>
               <option value="reviewer">Reviewer</option>

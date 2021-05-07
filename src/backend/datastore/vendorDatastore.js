@@ -1,17 +1,15 @@
 import { db } from "../firebase";
 import Collection from "../collectionConstants";
-import { generateCollectionName} from '../../util/Utility'
+
 
 export function useVendorDataStore() {
   return actions;
 }
 
-function getVendors(cityCode, limit) {
-    console.log("getVendors");
-    console.log(generateCollectionName(Collection.COLL_VENDORS, cityCode));
- 
+async function getVendors(cityCode, limit) {
+    console.log("getVendors for city - " + cityCode);
     const snapshot = await db
-    .collection(generateCollectionName(Collection.COLL_VENDORS, cityCode))
+    .collection(cityCode+'_'+Collection.COLL_VENDORS, cityCode)
     .limit(limit)
     .get();
 
@@ -19,7 +17,7 @@ function getVendors(cityCode, limit) {
   snapshot.forEach((doc) => {
     let obj = doc.data();
     console.log("VENDOR DOC LOCAL= " + JSON.stringify(obj));
-    vendors.push({ ...obj});
+    vendors.push({ uid: doc.id , ...obj});
   });
   console.log(vendors.length);
   console.log(vendors);
@@ -27,4 +25,6 @@ function getVendors(cityCode, limit) {
 }
 
 
-const actions = {};
+const actions = {
+  getVendors
+};
