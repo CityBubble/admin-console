@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { useUserDataStore } from "../backend/userDatastore";
+import { useUserDataStore } from "../backend/datastore/userDatastore";
 
 export default function CreateUser() {
   const formRef = useRef();
@@ -53,7 +53,13 @@ export default function CreateUser() {
         <Form onSubmit={handleCreateUserSubmit} ref={formRef}>
           <Form.Group id="username">
             <Form.Label>User Name</Form.Label>
-            <Form.Control type="text" ref={usernameRef} minLength="3" maxLength="20" required />
+            <Form.Control
+              type="text"
+              ref={usernameRef}
+              minLength="3"
+              maxLength="20"
+              required
+            />
           </Form.Group>
 
           <Form.Group id="contact">
@@ -87,7 +93,7 @@ export default function CreateUser() {
         </Form>
 
         <div className="w-100 text-center mt-3">
-          <Link to="/">Dashboard</Link>
+          <Link to="/internal_users">Back</Link>
         </div>
       </Card.Body>
     </Card>

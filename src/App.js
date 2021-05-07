@@ -7,6 +7,8 @@ import Dashboard from "./components/Dashboard";
 import SecureRoute from "./Route/SecureRoute";
 import PasswordReset from "./components/PasswordReset";
 import ModifyUser from "./components/ModifyUser";
+import VendorActions from "./components/VendorActions";
+import InternalUsers from "./components/InternalUsers";
 
 function App() {
   return (
@@ -18,11 +20,13 @@ function App() {
         <Router>
           <AuthProvider>
             <Switch>
-              <SecureRoute exact path="/" component={Dashboard} />
               <Route path="/login" component={Login} />
+              <Route path="/forgot-password" component={PasswordReset} />
+              <SecureRoute exact path="/" component={Dashboard} />
+              <SecureRoute path="/internal_users" component={InternalUsers} />
               <SecureRoute path="/createUser" component={CreateUser} />
               <SecureRoute path="/modifyUser" component={ModifyUser} />
-              <Route path="/forgot-password" component={PasswordReset} />
+              <SecureRoute path="/vendors" component={VendorActions} />
             </Switch>
           </AuthProvider>
         </Router>

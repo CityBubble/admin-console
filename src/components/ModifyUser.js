@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useUserDataStore } from "../backend/userDatastore";
+import { useUserDataStore } from "../backend/datastore/userDatastore";
 import { useUtility } from "../util/Utility";
 
 export default function ModifyUser() {
@@ -169,9 +169,8 @@ export default function ModifyUser() {
               Fetch User Details
             </Button>
           </Form>
-
           <div className="w-100 text-center mt-3">
-            <Link to="/">Dashboard</Link>
+            <Link to="/internal_users">Back</Link>
           </div>
         </Card.Body>
       </Card>

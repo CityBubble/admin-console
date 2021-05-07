@@ -30,11 +30,11 @@ export default function Dashboard() {
         <br />
         <strong>Role:</strong> {loggedInUser.role}
         <br />
-        <Link to="/createUser" className="btn btn-primary w-100 mt-3">
-          Create Internal User
+        <Link to="/internal_users" className="btn btn-primary w-100 mt-3">
+          Internal User Actions
         </Link>
-        <Link to="/modifyUser" className="btn btn-secondary w-100 mt-3">
-          Modify Internal User
+        <Link to="/vendors" className="btn btn-success w-100 mt-3">
+          Vendor Actions
         </Link>
         <hr />
         <Button className="w-100 btn-danger" onClick={handleLogOut}>

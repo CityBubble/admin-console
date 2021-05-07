@@ -23,9 +23,14 @@ function showConfirmDialog(msg) {
   return window.confirm(msg);
 }
 
+function generateCollectionName(coll, cityCode) {
+  return `${cityCode}_${coll}`;
+}
+
 const actions = {
   isPureString,
   isPureNumber,
   dateToString,
   showConfirmDialog,
+  generateCollectionName,
 };

@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { Link, useHistory } from "react-router-dom";
-import { useUserDataStore } from "../backend/userDatastore";
+import { useUserDataStore } from "../backend/datastore/userDatastore";
 
 export default function Login() {
   const emailRef = useRef();
@@ -78,6 +78,7 @@ export default function Login() {
             Sign In
           </Button>
         </Form>
+        <hr/>
 
         <div className="w-100 text-center mt-3">
           <Link to="/forgot-password">Forgot Password?</Link>

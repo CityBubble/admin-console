@@ -1,5 +1,5 @@
-import { db } from "./firebase";
-import Collection from "./collectionConstants";
+import { db } from "../firebase";
+import Collection from "../collectionConstants";
 
 export function useUserDataStore() {
   return actions;
