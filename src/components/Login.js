@@ -2,14 +2,14 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { Link, useHistory } from "react-router-dom";
-import { useDataStore } from "../backend/datastore";
+import { useUserDataStore } from "../backend/userDatastore";
 
 export default function Login() {
   const emailRef = useRef();
   const pwdRef = useRef();
 
   const { signIn, persistLoggedInUserData, signOut } = useAuth();
-  const { getAuthUserData } = useDataStore();
+  const { getAuthUserData } = useUserDataStore();
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const history = useHistory();

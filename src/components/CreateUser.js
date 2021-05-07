@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useAuth } from "../context/AuthContext";
 import { Link } from "react-router-dom";
-import { useDataStore } from "../backend/datastore";
+import { useUserDataStore } from "../backend/userDatastore";
 
 export default function CreateUser() {
   const formRef = useRef();
@@ -15,7 +15,7 @@ export default function CreateUser() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const { generateUser } = useDataStore();
+  const { generateUser } = useUserDataStore();
 
   async function handleCreateUserSubmit(e) {
     console.log("handle submit");

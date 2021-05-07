@@ -1,6 +1,7 @@
 import { db } from "./firebase";
+import Collection from "./collectionConstants";
 
-export function useDataStore() {
+export function useUserDataStore() {
   return actions;
 }
 
@@ -9,7 +10,7 @@ async function generateUser(newAuthUser, additionalData) {
   if (!newAuthUser) {
     return;
   }
-  const userRef = db.doc(`internal_users/${newAuthUser.uid}`);
+  const userRef = db.doc(`${Collection.COLL_INTERNAL_USERS}/${newAuthUser.uid}`);
   const snapshot = await userRef.get();
 
   if (!snapshot.exists) {
@@ -32,7 +33,7 @@ async function getAuthUserData(authUser) {
     throw new Error("Auth User invalid");
   }
   console.log(authUser.uid);
-  const userRef = db.doc(`internal_users/${authUser.uid}`);
+  const userRef = db.doc(`${Collection.COLL_INTERNAL_USERS}/${authUser.uid}`);
   const snapshot = await userRef.get();
 
   if (!snapshot.exists) {
@@ -49,7 +50,7 @@ async function getUserDataByEmail(email) {
     throw new Error("invalid email");
   }
   const snapshot = await db
-    .collection("internal_users")
+    .collection(Collection.COLL_INTERNAL_USERS)
     .where("email", "==", email)
     .get();
 
@@ -69,7 +70,7 @@ async function getUserDataByEmail(email) {
 async function getAllUsers() {
   console.log("getAllUsers");
   const snapshot = await db
-    .collection("internal_users")
+    .collection(Collection.COLL_INTERNAL_USERS)
     .orderBy("username", "desc")
     .limit(2)
     .get();
@@ -93,8 +94,8 @@ async function modifyUserData(modifiedUser) {
   console.log("modifyUserData");
   console.log(JSON.stringify(modifiedUser));
   const userDocRef = db
-    .collection("internal_users")
-    .doc(modifiedUser.uid + "dd");
+    .collection(Collection.COLL_INTERNAL_USERS)
+    .doc(modifiedUser.uid);
 
   await userDocRef.update(modifiedUser);
   console.log("updated successfully");

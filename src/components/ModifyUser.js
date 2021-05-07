@@ -1,7 +1,7 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useDataStore } from "../backend/datastore";
+import { useUserDataStore } from "../backend/userDatastore";
 import { useUtility } from "../util/Utility";
 
 export default function ModifyUser() {
@@ -18,7 +18,7 @@ export default function ModifyUser() {
   const [loading, setLoading] = useState(false);
   const [internalUser, setInternalUser] = useState(null);
 
-  const { getUserDataByEmail, modifyUserData } = useDataStore();
+  const { getUserDataByEmail, modifyUserData } = useUserDataStore();
   const { isPureString, isPureNumber } = useUtility();
 
   async function handleGetUserDataSubmit(e) {
