@@ -12,14 +12,20 @@ function isPureNumber(text) {
   return regex.test(text);
 }
 
-
 function dateToString(date) {
-  if(!date){
-    return '';
+  if (!date) {
+    return "";
   }
   return date.toDate().toString();
 }
+
+function showConfirmDialog(msg) {
+  return window.confirm(msg);
+}
+
 const actions = {
   isPureString,
   isPureNumber,
+  dateToString,
+  showConfirmDialog,
 };

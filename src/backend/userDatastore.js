@@ -10,7 +10,9 @@ async function generateUser(newAuthUser, additionalData) {
   if (!newAuthUser) {
     return;
   }
-  const userRef = db.doc(`${Collection.COLL_INTERNAL_USERS}/${newAuthUser.uid}`);
+  const userRef = db.doc(
+    `${Collection.COLL_INTERNAL_USERS}/${newAuthUser.uid}`
+  );
   const snapshot = await userRef.get();
 
   if (!snapshot.exists) {
@@ -101,10 +103,20 @@ async function modifyUserData(modifiedUser) {
   console.log("updated successfully");
 }
 
+async function deleteUserData(uid) {
+  console.log("deleteUserData");
+  console.log("uid: " + uid);
+  const userDocRef = db.collection(Collection.COLL_INTERNAL_USERS).doc(uid);
+
+  await userDocRef.delete();
+  console.log("deleted successfully");
+}
+
 const actions = {
   generateUser,
   getAuthUserData,
   getUserDataByEmail,
   getAllUsers,
   modifyUserData,
+  deleteUserData,
 };

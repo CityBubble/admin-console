@@ -18,8 +18,12 @@ export default function ModifyUser() {
   const [loading, setLoading] = useState(false);
   const [internalUser, setInternalUser] = useState(null);
 
-  const { getUserDataByEmail, modifyUserData } = useUserDataStore();
-  const { isPureString, isPureNumber } = useUtility();
+  const {
+    getUserDataByEmail,
+    modifyUserData,
+    deleteUserData,
+  } = useUserDataStore();
+  const { isPureString, isPureNumber, showConfirmDialog } = useUtility();
 
   async function handleGetUserDataSubmit(e) {
     console.log("handleGetUserDataSubmit");
@@ -107,6 +111,30 @@ export default function ModifyUser() {
     }
   }
 
+  async function deleteUserDoc() {
+    clearMessageFields();
+    if (!internalUser) {
+      setError("No user to delete");
+      return;
+    }
+    const consent = showConfirmDialog(
+      `Do you really want to delete the user: "${internalUser.username}" ?`
+    );
+    if (!consent) {
+      return;
+    }
+
+    try {
+      // call cloud function to delete this user from auth list
+      //on success, delete user from collection as well
+      await deleteUserData(internalUser.uid);
+      alert("User deleted successfully");
+      setInternalUser(null);
+    } catch (err) {
+      setError(err.message);
+    }
+  }
+
   function resetForm() {
     usernameRef.current.value = internalUser.username;
     contactRef.current.value = internalUser.contact;
@@ -158,6 +186,27 @@ export default function ModifyUser() {
           {error && <Alert variant="danger">{error}</Alert>}
           {message && <Alert variant="success">{message}</Alert>}
           <Form onSubmit={handleModifyUserSubmit} ref={modifyUserFormRef}>
+            <Form.Group id="uid">
+              <Form.Label>User Id</Form.Label>
+              <Form.Control
+                type="text"
+                required
+                readOnly
+                defaultValue={internalUser.uid}
+              />
+            </Form.Group>
+
+            <Form.Group id="email">
+              <Form.Label>Email Id</Form.Label>
+              <Form.Control
+                type="email"
+                ref={emailRef}
+                required
+                readOnly
+                defaultValue={internalUser.email}
+              />
+            </Form.Group>
+
             <Form.Group id="contact">
               <Form.Group id="username">
                 <Form.Label>User Name</Form.Label>
@@ -179,17 +228,6 @@ export default function ModifyUser() {
                   minLength="10"
                   ref={contactRef}
                   defaultValue={internalUser.contact}
-                />
-              </Form.Group>
-
-              <Form.Group id="email">
-                <Form.Label>Email Id</Form.Label>
-                <Form.Control
-                  type="email"
-                  ref={emailRef}
-                  required
-                  readOnly
-                  defaultValue={internalUser.email}
                 />
               </Form.Group>
 
@@ -219,7 +257,7 @@ export default function ModifyUser() {
             <Button
               disabled={loading}
               className="w-100 btn btn-danger mt-3"
-              onClick={() => alert("you sure")}
+              onClick={deleteUserDoc}
             >
               Delete
             </Button>
