@@ -13,11 +13,9 @@ import ViewVendors from "./components/ViewVendors";
 
 function App() {
   return (
-    <Container
-      className="d-flex align-items-center justify-content-center"
-      style={{ minHeight: "100vh" }}
-    >
-      <div className="w-100" style={{ maxWidth: "1000px" }}>
+    <Container className="mt-3"
+    style={{ minHeight: "100vh" }}>
+      <div>
         <Router>
           <AuthProvider>
             <Switch>

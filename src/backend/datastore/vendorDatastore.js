@@ -37,13 +37,12 @@ function constructQuery(query, filterObj) {
     if (filterObj.category) {
       query = query.where("category", "array-contains", filterObj.category);
     }
-    // if (filterObj.timeline) {
-    //   console.log(filterObj.timeline.from);
-    //   query = query
-    //     .orderBy(`timeline.${filterObj.timeline.field}`)
-    //     .startAt(filterObj.timeline.start_date)
-    //     .endAt(filterObj.timeline.end_date);
-    // }
+    if (filterObj.timeline) {
+      query = query
+        .orderBy(`timeline.${filterObj.timeline.field}`)
+        .startAt(filterObj.timeline.start_date)
+        .endAt(filterObj.timeline.end_date);
+    }
   }
   return query;
 }
