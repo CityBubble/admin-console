@@ -14,6 +14,27 @@ export default function ViewVendors() {
 
   const { getVendors } = useVendorDataStore();
 
+  function constructFilterCriteria() {
+    const start = new Date("2021-05-01 00:00:00");
+    const end = new Date("2021-05-07 23:59:59");
+
+    let strFrom = start.toDateString();
+    let strTo = end.toDateString();
+
+    console.log("start= " + strFrom);
+    console.log("end= " + strTo);
+    return {
+      status: "queued",
+      area: "ranjit avenue",
+      category: "bakery",
+      timeline: {
+        field: "request_date",
+        start_date: start,
+        end_date: end,
+      },
+    };
+  }
+
   async function handleViewVendors(e) {
     console.log("handle ViewVendors");
     e.preventDefault();
@@ -23,7 +44,10 @@ export default function ViewVendors() {
     setLoading(true);
     setVendors(null);
     try {
-      let list = await getVendors(cityRef.current.value, 10);
+      let list = await getVendors(
+        cityRef.current.value,
+        constructFilterCriteria()
+      );
 
       if (list.length > 0) {
         const lastObj = list[list.length - 1];
@@ -32,6 +56,7 @@ export default function ViewVendors() {
         setError("No records found ...");
       }
     } catch (err) {
+      console.log(err);
       setError(err.message);
     }
     setLoading(false);
@@ -52,11 +77,12 @@ export default function ViewVendors() {
           >
             <thead style={{ color: "#ffc93c" }}>
               <tr>
-                <th>Id</th>
+                {/* <th>Id</th> */}
                 <th>Name</th>
                 <th>Area</th>
                 <th>Category</th>
                 <th>Status</th>
+                <th>Request Date</th>
               </tr>
             </thead>
             <tbody>
@@ -69,12 +95,18 @@ export default function ViewVendors() {
                       alert(vendor.name + " " + index);
                     }}
                   >
-                    <td>{vendor.uid}</td>
+                    {/* <td>{vendor.uid}</td> */}
                     <td>{vendor.name}</td>
                     <td>{vendor.area}</td>
                     <td>{vendor.category.join(", ")}</td>
                     <td style={{ color: getStatusTextColor(vendor.status) }}>
                       {vendor.status}
+                    </td>
+                    <td>
+                      {vendor.timeline.request_date
+                        .toDate()
+                        .toString()
+                        .substring(3, 15)}
                     </td>
                   </tr>
                 );
@@ -88,7 +120,7 @@ export default function ViewVendors() {
 
   function renderCitySelection() {
     return (
-      <Card>
+      <Card className="w-50">
         <Card.Body>
           <h3 className="text-center mb-4">View Vendors </h3>
           {error && <Alert variant="danger">{error}</Alert>}

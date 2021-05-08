@@ -30,7 +30,7 @@ export default function PasswordReset() {
   }
 
   return (
-    <Card>
+    <Card className="w-50">
       <Card.Body>
         <h3 className="text-center mb-4">Password Reset </h3>
         {error && <Alert variant="danger">{error}</Alert>}

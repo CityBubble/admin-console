@@ -149,7 +149,7 @@ export default function ModifyUser() {
 
   const renderGetUserForm = () => {
     return (
-      <Card>
+      <Card className="w-50">
         <Card.Body>
           <h3 className="text-center mb-4">Fetch Internal User</h3>
           {error && <Alert variant="danger">{error}</Alert>}
@@ -179,7 +179,7 @@ export default function ModifyUser() {
 
   const renderModifyUserForm = () => {
     return (
-      <Card>
+      <Card className="w-50">
         <Card.Body>
           <h3 className="text-center mb-4">Modify User</h3>
           {error && <Alert variant="danger">{error}</Alert>}

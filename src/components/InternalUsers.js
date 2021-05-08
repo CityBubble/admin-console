@@ -4,7 +4,7 @@ import { Card } from "react-bootstrap";
 
 export default function InternalUsers() {
   return (
-    <Card>
+    <Card className="w-50">
       <Card.Body>
         <Link to="/createUser" className="btn btn-primary w-100 mt-3">
           Create Internal User

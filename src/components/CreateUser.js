@@ -45,7 +45,7 @@ export default function CreateUser() {
   }
 
   return (
-    <Card>
+    <Card className="w-50">
       <Card.Body>
         <h3 className="text-center mb-4">Create Internal User</h3>
         {error && <Alert variant="danger">{error}</Alert>}
