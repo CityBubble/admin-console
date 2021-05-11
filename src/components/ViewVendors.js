@@ -14,12 +14,15 @@ export default function ViewVendors() {
   const endDateRef = useRef();
 
   const [error, setError] = useState("");
-  const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [vendors, setVendors] = useState(null);
+  const [vendors, setVendors] = useState([]);
   const [cityCode, setCityCode] = useState("null");
   const [timeline, setTimeline] = useState("");
+  const [searchFilter, setFilter] = useState(null);
 
+  const [lastDoc, setLastDoc] = useState();
+  const [hasMore, setMore] = useState(false);
+  const [recordsCount, setRecordsCount] = useState(0);
   const { getVendors } = useVendorDataStore();
 
   function constructFilterCriteria() {
@@ -78,38 +81,64 @@ export default function ViewVendors() {
       timelineObj["end_date"] = endDate;
       filterObj["timeline"] = timelineObj;
     }
-
     return filterObj;
   }
 
-  async function handleViewVendors(e) {
+  async function onMorePress() {
+    console.log("MORE");
+    let filterObj = searchFilter;
+    if (lastDoc) {
+      filterObj["lastDoc"] = lastDoc;
+      await performSearch(filterObj);
+    }
+  }
+
+  function resetFilters() {
+    searchFormRef.current.reset();
+    cityRef.current.value = cityCode;
+    setTimeline("");
+    setMore(false);
+    setError("");
+    setVendors([]);
+    setRecordsCount(0);
+  }
+
+  function handleViewVendors(e) {
     console.log("handle ViewVendors");
     e.preventDefault();
 
     setError("");
-    setMessage("");
     setLoading(true);
-    // setVendors(null);
-    try {
-      const filterObj = constructFilterCriteria();
-      if (filterObj === undefined || filterObj === null) {
-        console.log("aborting search request due to error");
-        setLoading(false);
-        return;
-      }
-      let list = await getVendors(cityRef.current.value, filterObj);
 
+    const filterObj = constructFilterCriteria();
+    if (filterObj === undefined || filterObj === null) {
+      console.log("aborting search request due to error");
+      setLoading(false);
+      return;
+    }
+    setVendors([]);
+    performSearch(filterObj);
+    setLoading(false);
+  }
+
+  async function performSearch(filterObj) {
+    try {
+      setFilter(filterObj);
+      let [list, last] = await getVendors(cityRef.current.value, filterObj);
       if (list.length > 0) {
-        const lastObj = list[list.length - 1];
-        setVendors(list);
+        setVendors((vendors) => [...vendors, ...list]);
+        setLastDoc(last);
+        setMore(true);
+        console.log('size = ' + list.length);
+        setRecordsCount(vendors.length + list.length);
       } else {
+        setMore(false);
         setError("No records found ...");
       }
     } catch (err) {
       console.log(err);
       setError(err.message);
     }
-    setLoading(false);
   }
 
   function renderVendors() {
@@ -233,12 +262,12 @@ export default function ViewVendors() {
                     <option value="request_date">
                       Date of Request raised by vendor
                     </option>
-                    <option value="review_date">
+                    {/* <option value="review_date">
                       Date of Review Commencement
                     </option>
                     <option value="verify_date">
                       Date of profile verification complete
-                    </option>
+                    </option> */}
                   </Form.Control>
                 </Form.Group>
 
@@ -278,11 +307,7 @@ export default function ViewVendors() {
                 <Button
                   disabled={loading || cityCode === "null"}
                   className="w-30 mt-3 btn-warning text-white"
-                  onClick={() => {
-                    searchFormRef.current.reset();
-                    cityRef.current.value = cityCode;
-                    setTimeline("");
-                  }}
+                  onClick={resetFilters}
                 >
                   Reset Filters
                 </Button>
@@ -290,7 +315,8 @@ export default function ViewVendors() {
             </div>
           </Form>
           <hr />
-          <div className="w-100 text-center mt-3">
+
+          <div className="">
             <Link to="/vendors">Back</Link>
           </div>
         </Card.Body>
@@ -315,6 +341,18 @@ export default function ViewVendors() {
     <div>
       {renderFilterCriteria()}
       {renderVendors()}
+      <div className="row">
+        <div className="col">
+          <Button
+            disabled={hasMore === false}
+            variant="dark"
+            onClick={onMorePress}
+          >
+            More
+          </Button>
+        </div>
+        <div className="col">{recordsCount} records displayed</div>
+      </div>
     </div>
   );
 }
