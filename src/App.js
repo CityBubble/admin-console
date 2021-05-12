@@ -1,15 +1,15 @@
-import CreateUser from "./components/CreateUser";
+import CreateUser from "./screens/CreateUser";
 import { Container } from "react-bootstrap";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Login from "./components/Login";
-import Dashboard from "./components/Dashboard";
+import Login from "./screens/Login";
+import Dashboard from "./screens/Dashboard";
 import SecureRoute from "./Route/SecureRoute";
-import PasswordReset from "./components/PasswordReset";
-import ModifyUser from "./components/ModifyUser";
-import VendorActions from "./components/VendorActions";
-import InternalUsers from "./components/InternalUsers";
-import ViewVendors from "./components/ViewVendors";
+import PasswordReset from "./screens/PasswordReset";
+import ModifyUser from "./screens/ModifyUser";
+import VendorActions from "./screens/VendorActions";
+import InternalUsers from "./screens/InternalUsers";
+import ViewVendors from "./screens/ViewVendors";
 
 function App() {
   return (

@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
-import { Form, Button, Card, Alert, Table, FormLabel } from "react-bootstrap";
+import { Form, Button, Card, Alert, FormLabel } from "react-bootstrap";
 import { useVendorDataStore } from "../backend/datastore/vendorDatastore";
 import { Link } from "react-router-dom";
+import VendorListView from "../components/VendorListView";
 
 export default function ViewVendors() {
   const searchFormRef = useRef();
@@ -12,6 +13,7 @@ export default function ViewVendors() {
   const timelineRef = useRef();
   const startDateRef = useRef();
   const endDateRef = useRef();
+  const docsLimitRef = useRef();
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -22,7 +24,6 @@ export default function ViewVendors() {
 
   const [lastDoc, setLastDoc] = useState();
   const [hasMore, setMore] = useState(false);
-  const [recordsCount, setRecordsCount] = useState(0);
   const { getVendors } = useVendorDataStore();
 
   function constructFilterCriteria() {
@@ -89,7 +90,9 @@ export default function ViewVendors() {
     let filterObj = searchFilter;
     if (lastDoc) {
       filterObj["lastDoc"] = lastDoc;
+      setLoading(true);
       await performSearch(filterObj);
+      setLoading(false);
     }
   }
 
@@ -100,7 +103,6 @@ export default function ViewVendors() {
     setMore(false);
     setError("");
     setVendors([]);
-    setRecordsCount(0);
   }
 
   function handleViewVendors(e) {
@@ -124,13 +126,15 @@ export default function ViewVendors() {
   async function performSearch(filterObj) {
     try {
       setFilter(filterObj);
-      let [list, last] = await getVendors(cityRef.current.value, filterObj);
+      let [list, last] = await getVendors(
+        cityRef.current.value,
+        docsLimitRef.current.value,
+        filterObj
+      );
       if (list.length > 0) {
         setVendors((vendors) => [...vendors, ...list]);
         setLastDoc(last);
         setMore(true);
-        console.log('size = ' + list.length);
-        setRecordsCount(vendors.length + list.length);
       } else {
         setMore(false);
         setError("No records found ...");
@@ -139,62 +143,6 @@ export default function ViewVendors() {
       console.log(err);
       setError(err.message);
     }
-  }
-
-  function renderVendors() {
-    return (
-      <div className="container mt-3">
-        <hr />
-        {vendors && vendors.length > 0 && (
-          <Table
-            responsive="lg"
-            striped
-            bordered
-            hover
-            variant="dark"
-            size="lg"
-          >
-            <thead style={{ color: "#ffc93c" }}>
-              <tr>
-                {/* <th>Id</th> */}
-                <th>Name</th>
-                <th>Area</th>
-                <th>Category</th>
-                <th>Status</th>
-                <th>Request Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {vendors.map((vendor, index) => {
-                return (
-                  <tr
-                    className="mt-3"
-                    key={index}
-                    onClick={() => {
-                      alert(vendor.name + " " + index);
-                    }}
-                  >
-                    {/* <td>{vendor.uid}</td> */}
-                    <td>{vendor.name}</td>
-                    <td>{vendor.area}</td>
-                    <td>{vendor.category.join(", ")}</td>
-                    <td style={{ color: getStatusTextColor(vendor.status) }}>
-                      {vendor.status}
-                    </td>
-                    <td>
-                      {vendor.timeline.request_date
-                        .toDate()
-                        .toString()
-                        .substring(3, 15)}
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
-        )}
-      </div>
-    );
   }
 
   function renderFilterCriteria() {
@@ -217,6 +165,20 @@ export default function ViewVendors() {
               >
                 <option value="null">Select City</option>
                 <option value="asr">Amritsar</option>
+              </Form.Control>
+            </Form.Group>
+
+            <Form.Group id="limit">
+              <FormLabel>
+                <strong>Records per Search:</strong>
+              </FormLabel>
+              <Form.Control as="select" ref={docsLimitRef}>
+                <option value="2">2</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
               </Form.Control>
             </Form.Group>
 
@@ -324,24 +286,11 @@ export default function ViewVendors() {
     );
   }
 
-  function getStatusTextColor(status) {
-    switch (status) {
-      case "queued":
-        return "#3d84b8";
-      case "review":
-        return "#ffab73";
-      case "active":
-        return "#8fd9a8";
-      default:
-        return "white";
-    }
-  }
-
   return (
     <div>
       {renderFilterCriteria()}
-      {renderVendors()}
-      <div className="row">
+      <VendorListView vendorList={vendors}></VendorListView>
+      <div className="row mt-3">
         <div className="col">
           <Button
             disabled={hasMore === false}
@@ -351,7 +300,6 @@ export default function ViewVendors() {
             More
           </Button>
         </div>
-        <div className="col">{recordsCount} records displayed</div>
       </div>
     </div>
   );

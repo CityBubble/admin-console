@@ -5,16 +5,14 @@ export function useVendorDataStore() {
   return actions;
 }
 
-async function getVendors(cityCode, filterObj) {
+async function getVendors(cityCode, limit, filterObj) {
   console.log("getVendors for city - " + cityCode);
 
   let query = db
     .collection(cityCode + "_" + Collection.COLL_VENDORS);
     
   query = constructQuery(query, filterObj);
-  const snapshot = await query
-    .limit(Collection.COLL_VENDORS_SEARCH_LIMIT)
-    .get();
+  const snapshot = await query.limit(limit).get();
 
   let vendors = [];
   let lastDoc = {};
