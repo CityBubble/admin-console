@@ -3,6 +3,7 @@ import { Form, Button, Card, Alert, FormLabel } from "react-bootstrap";
 import { useVendorDataStore } from "../backend/datastore/vendorDatastore";
 import { Link } from "react-router-dom";
 import VendorListView from "../components/VendorListView";
+import VendorDetailView from "../components/VendorDetailView";
 
 export default function ViewVendors() {
   const searchFormRef = useRef();
@@ -18,12 +19,13 @@ export default function ViewVendors() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [vendors, setVendors] = useState([]);
+  const [selectedVendor, setSelectedVendor] = useState();
   const [cityCode, setCityCode] = useState("null");
   const [timeline, setTimeline] = useState("");
   const [searchFilter, setFilter] = useState(null);
-
   const [lastDoc, setLastDoc] = useState();
   const [hasMore, setMore] = useState(false);
+
   const { getVendors } = useVendorDataStore();
 
   function constructFilterCriteria() {
@@ -98,10 +100,10 @@ export default function ViewVendors() {
 
   function resetFilters() {
     searchFormRef.current.reset();
-    cityRef.current.value = cityCode;
     setTimeline("");
     setMore(false);
     setError("");
+    setSelectedVendor(null);
     setVendors([]);
   }
 
@@ -145,9 +147,23 @@ export default function ViewVendors() {
     }
   }
 
+  function renderMainView() {
+    return (
+      <div className="row">
+        <div className="col">{renderFilterCriteria()}</div>
+
+        <div className="col">
+          {selectedVendor && (
+            <VendorDetailView currVendor={selectedVendor}></VendorDetailView>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   function renderFilterCriteria() {
     return (
-      <Card className="w-50">
+      <Card>
         <Card.Body>
           <h3 className="text-center mb-4">View Vendors </h3>
           {error && <Alert variant="danger">{error}</Alert>}
@@ -159,7 +175,7 @@ export default function ViewVendors() {
                 onChange={() => {
                   setCityCode(cityRef.current.value);
                   if (cityRef.current.value === "null") {
-                    searchFormRef.current.reset();
+                    resetFilters();
                   }
                 }}
               >
@@ -190,7 +206,6 @@ export default function ViewVendors() {
                     <option value="queued">Queued</option>
                     <option value="review">Under Review</option>
                     <option value="active">Active</option>
-                    <option value="rejected">Rejected</option>
                   </Form.Control>
                 </Form.Group>
 
@@ -269,7 +284,10 @@ export default function ViewVendors() {
                 <Button
                   disabled={loading || cityCode === "null"}
                   className="w-30 mt-3 btn-warning text-white"
-                  onClick={resetFilters}
+                  onClick={() => {
+                    resetFilters();
+                    cityRef.current.value = cityCode;
+                  }}
                 >
                   Reset Filters
                 </Button>
@@ -286,10 +304,26 @@ export default function ViewVendors() {
     );
   }
 
+  function handleVendorClick(vendor) {
+    if (vendor) {
+      setSelectedVendor(vendor);
+      //scrolls to top of window
+      window.scrollTo({
+        top: 0,
+        behavior: "smooth",
+      });
+    } else {
+      setSelectedVendor(null);
+    }
+  }
+
   return (
     <div>
-      {renderFilterCriteria()}
-      <VendorListView vendorList={vendors}></VendorListView>
+      {renderMainView()}
+      <VendorListView
+        vendorList={vendors}
+        onVendorClicked={handleVendorClick}
+      ></VendorListView>
       <div className="row mt-3">
         <div className="col">
           <Button

@@ -48,10 +48,9 @@ export default class VendorListView extends Component {
                 {vendors.map((vendor, index) => {
                   return (
                     <tr
-                      className="mt-3"
                       key={index}
                       onClick={() => {
-                        alert(vendor.name + " " + index);
+                        this.props.onVendorClicked(vendor);
                       }}
                     >
                       {/* <td>{vendor.uid}</td> */}
