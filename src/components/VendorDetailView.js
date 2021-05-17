@@ -39,7 +39,7 @@ export default class VendorDetailView extends Component {
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Area</td>
-              <td>{vendor.area}</td>
+              <td>{vendor.address.area}</td>
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Category</td>

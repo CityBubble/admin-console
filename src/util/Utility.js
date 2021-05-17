@@ -23,8 +23,20 @@ function showConfirmDialog(msg) {
   return window.confirm(msg);
 }
 
-function generateCollectionName(coll, cityCode) {
-  return `${cityCode}_${coll}`;
+function formatTextCasing(text) {
+  if (!text) {
+    return "";
+  }
+  const arrOfWords = text.split(" ");
+  const arrOfWordsCased = [];
+  for (let i = 0; i < arrOfWords.length; i++) {
+    let word = arrOfWords[i];
+    word = word.trim();
+    if (word.length > 0) {
+      arrOfWordsCased.push(word[0].toUpperCase() + word.slice(1).toLowerCase());
+    }
+  }
+  return arrOfWordsCased.join(" ");
 }
 
 const actions = {
@@ -32,5 +44,5 @@ const actions = {
   isPureNumber,
   dateToString,
   showConfirmDialog,
-  generateCollectionName,
+  formatTextCasing,
 };

@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import { Card } from "react-bootstrap";
 
-export default function InternalUsers() {
+export default function InternalUserAction() {
   return (
     <Card className="w-50">
       <Card.Body>

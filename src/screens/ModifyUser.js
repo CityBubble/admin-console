@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useUserDataStore } from "../backend/datastore/userDatastore";
+import Constants from "../util/Constants";
 import { useUtility } from "../util/Utility";
 
 export default function ModifyUser() {
@@ -72,7 +73,7 @@ export default function ModifyUser() {
     usernameRef.current.value = usernameRef.current.value.trim();
     if (internalUser.username !== usernameRef.current.value) {
       isDataModified = true;
-      if (usernameRef.current.value.length < 3) {
+      if (usernameRef.current.value.length < Constants.NAME_MIN_LENGTH) {
         setError("name must be atleast 3 characters long");
         return false;
       }
@@ -87,7 +88,7 @@ export default function ModifyUser() {
     contactRef.current.value = contactRef.current.value.trim();
     if (internalUser.contact !== contactRef.current.value) {
       isDataModified = true;
-      if (contactRef.current.value.length < 10) {
+      if (contactRef.current.value.length < Constants.CONTACT_LENGTH) {
         setError("contact must be 10 digits long");
         return false;
       }

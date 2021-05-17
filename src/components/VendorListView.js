@@ -55,7 +55,7 @@ export default class VendorListView extends Component {
                     >
                       {/* <td>{vendor.uid}</td> */}
                       <td>{vendor.name}</td>
-                      <td>{vendor.area}</td>
+                      <td>{vendor.address.area}</td>
                       <td>{vendor.category.join(", ")}</td>
                       <td
                         style={{

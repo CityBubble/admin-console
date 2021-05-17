@@ -4,6 +4,7 @@ import { useVendorDataStore } from "../backend/datastore/vendorDatastore";
 import { Link } from "react-router-dom";
 import VendorListView from "../components/VendorListView";
 import VendorDetailView from "../components/VendorDetailView";
+import { useUtility } from "../util/Utility";
 
 export default function ViewVendors() {
   const searchFormRef = useRef();
@@ -27,6 +28,7 @@ export default function ViewVendors() {
   const [hasMore, setMore] = useState(false);
 
   const { getVendors } = useVendorDataStore();
+  const { formatTextCasing } = useUtility();
 
   function constructFilterCriteria() {
     let filterObj = {};
@@ -36,11 +38,11 @@ export default function ViewVendors() {
     }
     const area = areaRef.current.value.trim();
     if (area.length > 2) {
-      filterObj["area"] = area;
+      filterObj["area"] = formatTextCasing(area);
     }
     const category = categoryRef.current.value.trim();
     if (category.length > 2) {
-      filterObj["category"] = category;
+      filterObj["category"] = formatTextCasing(category);
     }
 
     if (timeline.length > 0) {
@@ -136,7 +138,7 @@ export default function ViewVendors() {
       if (list.length > 0) {
         setVendors((vendors) => [...vendors, ...list]);
         setLastDoc(last);
-        setMore(true);
+        setMore(list.length === parseInt(docsLimitRef.current.value));
       } else {
         setMore(false);
         setError("No records found ...");
@@ -324,7 +326,7 @@ export default function ViewVendors() {
         vendorList={vendors}
         onVendorClicked={handleVendorClick}
       ></VendorListView>
-      <div className="row mt-3">
+      <div className="row p-3">
         <div className="col">
           <Button
             disabled={hasMore === false}

@@ -8,13 +8,13 @@ import SecureRoute from "./Route/SecureRoute";
 import PasswordReset from "./screens/PasswordReset";
 import ModifyUser from "./screens/ModifyUser";
 import VendorActions from "./screens/VendorActions";
-import InternalUsers from "./screens/InternalUsers";
+import InternalUserAction from "./screens/InternalUserAction";
 import ViewVendors from "./screens/ViewVendors";
+import CreateVendorProfile from "./screens/CreateVendorProfile";
 
 function App() {
   return (
-    <Container className="mt-3"
-    style={{ minHeight: "100vh" }}>
+    <Container className="mt-3" style={{ minHeight: "100vh" }}>
       <div>
         <Router>
           <AuthProvider>
@@ -22,11 +22,15 @@ function App() {
               <Route path="/login" component={Login} />
               <Route path="/forgot-password" component={PasswordReset} />
               <SecureRoute exact path="/" component={Dashboard} />
-              <SecureRoute path="/internal_users" component={InternalUsers} />
+              <SecureRoute
+                path="/internal_users"
+                component={InternalUserAction}
+              />
               <SecureRoute path="/createUser" component={CreateUser} />
               <SecureRoute path="/modifyUser" component={ModifyUser} />
               <SecureRoute path="/vendors" component={VendorActions} />
               <SecureRoute path="/view_vendors" component={ViewVendors} />
+              <SecureRoute path="/createVendor" component={CreateVendorProfile} />
             </Switch>
           </AuthProvider>
         </Router>

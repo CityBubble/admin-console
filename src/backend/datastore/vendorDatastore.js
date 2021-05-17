@@ -8,9 +8,8 @@ export function useVendorDataStore() {
 async function getVendors(cityCode, limit, filterObj) {
   console.log("getVendors for city - " + cityCode);
 
-  let query = db
-    .collection(cityCode + "_" + Collection.COLL_VENDORS);
-    
+  let query = db.collection(cityCode + "_" + Collection.COLL_VENDORS);
+
   query = constructQuery(query, filterObj);
   const snapshot = await query.limit(limit).get();
 
@@ -32,7 +31,7 @@ function constructQuery(query, filterObj) {
       query = query.where("status", "==", filterObj.status);
     }
     if (filterObj.area) {
-      query = query.where("area", "==", filterObj.area);
+      query = query.where("address.area", "==", filterObj.area);
     }
     if (filterObj.category) {
       query = query.where("category", "array-contains", filterObj.category);
@@ -53,6 +52,46 @@ function constructQuery(query, filterObj) {
   return query;
 }
 
+async function addNewVendorProfile(vendorObj, checkForMobileUniqness) {
+  console.log("addNewVendorProfile for " + JSON.stringify(vendorObj));
+  if (!vendorObj) {
+    throw new Error("invalid vendor Obj");
+  }
+  if (
+    !vendorObj.address ||
+    !vendorObj.address.city ||
+    !vendorObj.address.city.code
+  ) {
+    throw new Error("Missing city code");
+  }
+  const vendorCollRef = db.collection(
+    vendorObj.address.city.code + "_" + Collection.COLL_VENDORS
+  );
+  if (checkForMobileUniqness) {
+    console.log("checkForMobileUniqness");
+    const snapshot = await vendorCollRef
+      .where("contact", "==", vendorObj.contact)
+      .limit(1)
+      .get();
+  
+    if (!snapshot.empty) {
+      console.log("old vendor exists");
+      let oldVendor = {};
+      snapshot.forEach((doc) => {
+        oldVendor = doc.data();
+        return;
+      });
+      console.log("OLD VENDOR = " + JSON.stringify(oldVendor));
+      return [true, oldVendor.name];
+    }
+  }
+  console.log("post unique check");
+  await vendorCollRef.add(vendorObj);
+  console.log("new vendor added successfully");
+  return [false, ""];
+}
+
 const actions = {
   getVendors,
+  addNewVendorProfile,
 };

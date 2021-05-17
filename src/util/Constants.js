@@ -1,0 +1,7 @@
+module.exports = Object.freeze({
+  NAME_MIN_LENGTH: 3,
+  CONTACT_LENGTH: 10,
+  PINCODE_LENGTH: 6,
+  VENDOR_PROFILE_INITIAL_VERIFY_STATUS: "queued",
+  VENDOR_PROFILE_INITIAL_PROFILE_STATUS: "verification",
+});
