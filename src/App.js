@@ -1,16 +1,16 @@
-import CreateUser from "./screens/CreateUser";
 import { Container } from "react-bootstrap";
 import { AuthProvider } from "./context/AuthContext";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-import Login from "./screens/Login";
-import Dashboard from "./screens/Dashboard";
 import SecureRoute from "./Route/SecureRoute";
-import PasswordReset from "./screens/PasswordReset";
-import ModifyUser from "./screens/ModifyUser";
-import VendorActions from "./screens/VendorActions";
-import InternalUserAction from "./screens/InternalUserAction";
-import ViewVendors from "./screens/ViewVendors";
-import CreateVendorProfile from "./screens/CreateVendorProfile";
+import Login from "./screens/authenticate/Login";
+import PasswordReset from "./screens/authenticate/PasswordReset";
+import Dashboard from "./screens/Dashboard";
+import InternalUserAction from "./screens/internalUser/InternalUserAction";
+import CreateUser from "./screens/internalUser/CreateUser";
+import ModifyUser from "./screens/internalUser/ModifyUser";
+import VendorActions from "./screens/vendor/VendorActions";
+import ViewVendors from "./screens/vendor/ViewVendors";
+import CreateVendorProfile from "./screens/vendor/CreateVendorProfile";
 
 function App() {
   return (
@@ -30,7 +30,10 @@ function App() {
               <SecureRoute path="/modifyUser" component={ModifyUser} />
               <SecureRoute path="/vendors" component={VendorActions} />
               <SecureRoute path="/view_vendors" component={ViewVendors} />
-              <SecureRoute path="/createVendor" component={CreateVendorProfile} />
+              <SecureRoute
+                path="/createVendor"
+                component={CreateVendorProfile}
+              />
             </Switch>
           </AuthProvider>
         </Router>

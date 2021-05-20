@@ -1,9 +1,9 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useVendorDataStore } from "../backend/datastore/vendorDatastore";
-import Constants from "../util/Constants";
-import { useUtility } from "../util/Utility";
+import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
+import Constants from "../../util/Constants";
+import { useUtility } from "../../util/Utility";
 
 export default function CreateVendorProfile() {
   const formRef = useRef();

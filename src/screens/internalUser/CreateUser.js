@@ -1,8 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Alert, Button, Card, Form } from "react-bootstrap";
 import { Link } from "react-router-dom";
-import { useUserDataStore } from "../backend/datastore/userDatastore";
-import { useAuth } from "../context/AuthContext";
+import { useUserDataStore } from "../../backend/datastore/userDatastore";
+import { useAuth } from "../../context/AuthContext";
 
 export default function CreateUser() {
   const formRef = useRef();

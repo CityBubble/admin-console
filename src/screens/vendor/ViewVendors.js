@@ -1,10 +1,10 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert, FormLabel } from "react-bootstrap";
-import { useVendorDataStore } from "../backend/datastore/vendorDatastore";
+import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
 import { Link } from "react-router-dom";
-import VendorListView from "../components/VendorListView";
-import VendorDetailView from "../components/VendorDetailView";
-import { useUtility } from "../util/Utility";
+import VendorListView from "../../components/vendor/VendorListView";
+import VendorDetailView from "../../components/vendor/VendorDetailView";
+import { useUtility } from "../../util/Utility"
 
 export default function ViewVendors() {
   const searchFormRef = useRef();
