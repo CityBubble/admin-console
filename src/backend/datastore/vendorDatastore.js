@@ -5,10 +5,14 @@ export function useVendorDataStore() {
   return actions;
 }
 
+function getCollectionRef(cityCode) {
+  return db.collection(cityCode + "_" + Collection.COLL_VENDORS);
+}
+
 async function getVendors(cityCode, limit, filterObj) {
   console.log("getVendors for city - " + cityCode);
 
-  let query = db.collection(cityCode + "_" + Collection.COLL_VENDORS);
+  let query = getCollectionRef(cityCode);
 
   query = constructQuery(query, filterObj);
   const snapshot = await query.limit(limit).get();
@@ -64,16 +68,15 @@ async function addNewVendorProfile(vendorObj, checkForMobileUniqness) {
   ) {
     throw new Error("Missing city code");
   }
-  const vendorCollRef = db.collection(
-    vendorObj.address.city.code + "_" + Collection.COLL_VENDORS
-  );
+
+  const vendorCollRef = getCollectionRef(vendorObj.address.city.code);
   if (checkForMobileUniqness) {
     console.log("checkForMobileUniqness");
     const snapshot = await vendorCollRef
       .where("contact", "==", vendorObj.contact)
       .limit(1)
       .get();
-  
+
     if (!snapshot.empty) {
       console.log("old vendor exists");
       let oldVendor = {};
@@ -91,7 +94,41 @@ async function addNewVendorProfile(vendorObj, checkForMobileUniqness) {
   return [false, ""];
 }
 
+async function getVendorBySearchField(cityCode, searchField, searchVal) {
+  console.log("getVendorBySearchField for city - " + cityCode);
+  if (!cityCode || !searchField || !searchVal) {
+    throw new Error("Invalid Arguments");
+  }
+  console.log("filed = " + searchField);
+  console.log("val = " + searchVal);
+  const vendorCollRef = getCollectionRef(cityCode);
+
+  const snapshot = await vendorCollRef
+    .where(searchField, "==", searchVal)
+    .orderBy("timeline.request_date", "asc")
+    .get();
+  if (snapshot.empty) {
+    throw new Error("No record found ..");
+  }
+
+  let vendors = [];
+  snapshot.forEach((doc) => {
+    vendors.push({ uid: doc.id, ...doc.data() });
+    return;
+  });
+  return vendors;
+}
+
+async function modifyVendorData(cityCode, modifiedVendor) {
+  const vendorDocRef = getCollectionRef(cityCode).doc(modifiedVendor.uid);
+  // call cloud function on edit event to update all ads data with latest vals
+  await vendorDocRef.update(modifiedVendor);
+  console.log("vendor updated successfully");
+}
+
 const actions = {
   getVendors,
   addNewVendorProfile,
+  getVendorBySearchField,
+  modifyVendorData,
 };

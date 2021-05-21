@@ -137,9 +137,7 @@ export default function ModifyUser() {
   }
 
   function resetForm() {
-    usernameRef.current.value = internalUser.username;
-    contactRef.current.value = internalUser.contact;
-    roleRef.current.value = internalUser.role;
+    modifyUserFormRef.current.reset();
     clearMessageFields();
   }
 
@@ -207,43 +205,41 @@ export default function ModifyUser() {
               />
             </Form.Group>
 
+            <Form.Group id="username">
+              <Form.Label>User Name</Form.Label>
+              <Form.Control
+                type="text"
+                ref={usernameRef}
+                minLength="3"
+                maxLength="20"
+                required
+                defaultValue={internalUser.username}
+              />
+            </Form.Group>
+
             <Form.Group id="contact">
-              <Form.Group id="username">
-                <Form.Label>User Name</Form.Label>
-                <Form.Control
-                  type="text"
-                  ref={usernameRef}
-                  minLength="3"
-                  maxLength="20"
-                  required
-                  defaultValue={internalUser.username}
-                />
-              </Form.Group>
+              <Form.Label>Contact</Form.Label>
+              <Form.Control
+                type="text"
+                maxLength="10"
+                minLength="10"
+                ref={contactRef}
+                defaultValue={internalUser.contact}
+              />
+            </Form.Group>
 
-              <Form.Group id="contact">
-                <Form.Label>Contact</Form.Label>
-                <Form.Control
-                  type="text"
-                  maxLength="10"
-                  minLength="10"
-                  ref={contactRef}
-                  defaultValue={internalUser.contact}
-                />
-              </Form.Group>
-
-              <Form.Group id="uerRole">
-                <Form.Label>Assign Role</Form.Label>
-                <Form.Control
-                  as="select"
-                  ref={roleRef}
-                  required
-                  defaultValue={internalUser.role}
-                >
-                  <option value="reviewer">Reviewer</option>
-                  <option value="admin">Admin</option>
-                  <option value="master">Master</option>
-                </Form.Control>
-              </Form.Group>
+            <Form.Group id="uerRole">
+              <Form.Label>Assign Role</Form.Label>
+              <Form.Control
+                as="select"
+                ref={roleRef}
+                required
+                defaultValue={internalUser.role}
+              >
+                <option value="reviewer">Reviewer</option>
+                <option value="admin">Admin</option>
+                <option value="master">Master</option>
+              </Form.Control>
             </Form.Group>
 
             <Button

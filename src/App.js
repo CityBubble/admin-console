@@ -11,6 +11,7 @@ import ModifyUser from "./screens/internalUser/ModifyUser";
 import VendorActions from "./screens/vendor/VendorActions";
 import ViewVendors from "./screens/vendor/ViewVendors";
 import CreateVendorProfile from "./screens/vendor/CreateVendorProfile";
+import ModifyVendor from "./screens/vendor/ModifyVendor";
 
 function App() {
   return (
@@ -29,11 +30,12 @@ function App() {
               <SecureRoute path="/createUser" component={CreateUser} />
               <SecureRoute path="/modifyUser" component={ModifyUser} />
               <SecureRoute path="/vendors" component={VendorActions} />
-              <SecureRoute path="/view_vendors" component={ViewVendors} />
+              <SecureRoute path="/viewVendors" component={ViewVendors} />
               <SecureRoute
                 path="/createVendor"
                 component={CreateVendorProfile}
               />
+              <SecureRoute path="/modifyVendor" component={ModifyVendor} />
             </Switch>
           </AuthProvider>
         </Router>

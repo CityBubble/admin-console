@@ -39,10 +39,31 @@ function formatTextCasing(text) {
   return arrOfWordsCased.join(" ");
 }
 
+function formatCaseForCommaSeparatedItems(text) {
+  const rawTextArr = text.split(",");
+  let refinedTextArr = [];
+  for (let i = 0; i < rawTextArr.length; i++) {
+    const val = formatTextCasing(rawTextArr[i]);
+    if (val.length > 0) {
+      refinedTextArr.push(val);
+    }
+  }
+  return refinedTextArr;
+}
+
+ function scrollToTop() {
+   window.scrollTo({
+     top: 0,
+     behavior: "smooth",
+   });
+ }
+
 const actions = {
   isPureString,
   isPureNumber,
   dateToString,
   showConfirmDialog,
   formatTextCasing,
+  formatCaseForCommaSeparatedItems,
+  scrollToTop,
 };

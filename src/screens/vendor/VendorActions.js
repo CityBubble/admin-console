@@ -9,8 +9,11 @@ export default function VendorActions() {
         <Link to="/createVendor" className="btn btn-primary w-100 mt-3">
           Create Vendor Profile
         </Link>
-        <Link to="/view_vendors" className="btn btn-secondary w-100 mt-3">
-          View All Vendors
+        <Link to="/modifyVendor" className="btn btn-info w-100 mt-3">
+          Modify Vendor Profile
+        </Link>
+        <Link to="/viewVendors" className="btn btn-secondary w-100 mt-3">
+          View Vendor Profiles
         </Link>
         <hr />
         <div className="w-100 text-center mt-3">

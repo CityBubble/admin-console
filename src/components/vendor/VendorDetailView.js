@@ -2,6 +2,7 @@ import { Component } from "react";
 import { Table } from "react-bootstrap";
 
 export default class VendorDetailView extends Component {
+  
   render() {
     const vendor = this.props.currVendor;
     return this.renderVendor(vendor);

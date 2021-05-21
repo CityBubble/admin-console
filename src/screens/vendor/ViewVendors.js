@@ -28,7 +28,7 @@ export default function ViewVendors() {
   const [hasMore, setMore] = useState(false);
 
   const { getVendors } = useVendorDataStore();
-  const { formatTextCasing } = useUtility();
+  const { formatTextCasing , scrollToTop} = useUtility();
 
   function constructFilterCriteria() {
     let filterObj = {};
@@ -309,11 +309,7 @@ export default function ViewVendors() {
   function handleVendorClick(vendor) {
     if (vendor) {
       setSelectedVendor(vendor);
-      //scrolls to top of window
-      window.scrollTo({
-        top: 0,
-        behavior: "smooth",
-      });
+      scrollToTop();
     } else {
       setSelectedVendor(null);
     }

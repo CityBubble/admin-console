@@ -19,7 +19,12 @@ export default function CreateVendorProfile() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
   const { addNewVendorProfile } = useVendorDataStore();
-  const { isPureNumber, showConfirmDialog, formatTextCasing } = useUtility();
+  const {
+    isPureNumber,
+    showConfirmDialog,
+    formatTextCasing,
+    formatCaseForCommaSeparatedItems,
+  } = useUtility();
 
   function validateVendorForm() {
     clearMessageFields();
@@ -81,18 +86,6 @@ export default function CreateVendorProfile() {
     setMessage("");
   }
 
-  function formatCategories() {
-    const rawCategories = categoryRef.current.value.split(",");
-    let categories = [];
-    for (let i = 0; i < rawCategories.length; i++) {
-      const val = formatTextCasing(rawCategories[i]);
-      if (val.length > 0) {
-        categories.push(val);
-      }
-    }
-    return categories;
-  }
-
   async function handleCreateVendorSubmit(e) {
     console.log("handle handleCreateVendorSubmit");
     e.preventDefault();
@@ -101,7 +94,7 @@ export default function CreateVendorProfile() {
     if (validateVendorForm()) {
       try {
         const cityVals = cityRef.current.value.split(",");
-        const categories = formatCategories();
+        const categories = formatCaseForCommaSeparatedItems(categoryRef.current.value);
 
         const vendorObj = {
           name: formatTextCasing(vendorNameRef.current.value),
