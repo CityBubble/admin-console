@@ -329,13 +329,15 @@ export default class VendorDetailCardView extends Component {
             >
               Modify
             </Button>
-            {/* <Button
+            <Button
               disabled={this.state.loading}
               className="w-100 btn btn-danger mt-3"
-              //onClick={deleteUserDoc}
+              onClick={() =>
+                this.props.deleteProfileCallback(vendor.uid, vendor.name)
+              }
             >
               Delete
-            </Button> */}
+            </Button>
             <Button
               disabled={this.state.loading}
               className="w-100 btn btn-primary mt-3"

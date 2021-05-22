@@ -2,7 +2,6 @@ import { Component } from "react";
 import { Table } from "react-bootstrap";
 
 export default class VendorDetailView extends Component {
-  
   render() {
     const vendor = this.props.currVendor;
     return this.renderVendor(vendor);
@@ -39,13 +38,25 @@ export default class VendorDetailView extends Component {
               <td>{vendor.contact}</td>
             </tr>
             <tr>
-              <td style={{ color: "#ffc93c" }}>Area</td>
-              <td>{vendor.address.area}</td>
-            </tr>
-            <tr>
               <td style={{ color: "#ffc93c" }}>Category</td>
               <td>{vendor.category.join(", ")}</td>
             </tr>
+
+            <tr>
+              <td style={{ color: "#ffc93c" }}>Area</td>
+              <td>{vendor.address.area}</td>
+            </tr>
+
+            <tr>
+              <td style={{ color: "#ffc93c" }}>Address</td>
+              <td>{vendor.address.full_address}</td>
+            </tr>
+
+            <tr>
+              <td style={{ color: "#ffc93c" }}>Pincode</td>
+              <td>{vendor.address.pincode}</td>
+            </tr>
+
             <tr>
               <td style={{ color: "#ffc93c" }}>Status</td>
               <td
@@ -55,6 +66,10 @@ export default class VendorDetailView extends Component {
               >
                 {vendor.status}
               </td>
+            </tr>
+            <tr>
+              <td style={{ color: "#ffc93c" }}>Profile Status</td>
+              <td>{vendor.profile_status}</td>
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Requested On</td>

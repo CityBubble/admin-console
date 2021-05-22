@@ -120,10 +120,25 @@ async function getVendorBySearchField(cityCode, searchField, searchVal) {
 }
 
 async function modifyVendorData(cityCode, modifiedVendor) {
+  console.log("modify Vendor data for city- " + cityCode);
+  if (!cityCode || !modifiedVendor) {
+    throw new Error("Invalid Arguments");
+  }
   const vendorDocRef = getCollectionRef(cityCode).doc(modifiedVendor.uid);
   // call cloud function on edit event to update all ads data with latest vals
   await vendorDocRef.update(modifiedVendor);
   console.log("vendor updated successfully");
+}
+
+async function deleteVendorData(cityCode, uid) {
+  console.log("deleteVendorData for cityCode = " + cityCode);
+  console.log("uid: " + uid);
+  if (!cityCode || !uid) {
+    throw new Error("Invalid Arguments");
+  }
+  const vendorDocRef = getCollectionRef(cityCode).doc(uid);
+  await vendorDocRef.delete();
+  console.log(`${uid} deleted successfully`);
 }
 
 const actions = {
@@ -131,4 +146,5 @@ const actions = {
   addNewVendorProfile,
   getVendorBySearchField,
   modifyVendorData,
+  deleteVendorData,
 };

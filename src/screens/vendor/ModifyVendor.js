@@ -16,20 +16,29 @@ export default function ModifyVendor() {
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
-  const [vendorProfiles, setVendorProfiles] = useState(null);
+  const [vendorProfiles, setVendorProfiles] = useState([]);
 
-  const { getVendorBySearchField, modifyVendorData } = useVendorDataStore();
+  const { getVendorBySearchField, modifyVendorData, deleteVendorData } =
+    useVendorDataStore();
 
   const {
     formatTextCasing,
     formatCaseForCommaSeparatedItems,
     scrollToTop,
     isPureNumber,
+    showConfirmDialog,
   } = useUtility();
 
   async function handleGetVendorDataSubmit(e) {
     console.log("handleGetVendorDataSubmit");
     e.preventDefault();
+    if (searchByContact) {
+      if (!isPureNumber(contactRef.current.value)) {
+        setError("Mobile number can only contain digits");
+        setVendorProfiles([]);
+        return;
+      }
+    }
 
     clearMessageFields();
     setLoading(true);
@@ -55,14 +64,48 @@ export default function ModifyVendor() {
     setMessage("");
   }
 
-  async function modifyVendorProfileData(modifiedVendor) {
+  async function modifyVendorProfile(modifiedVendor) {
     console.log("modifyVendorProfileData");
     try {
       await modifyVendorData(cityRef.current.value, modifiedVendor);
       return [true, "Profile Updated Successfully"];
     } catch (error) {
-      console.log("error=> " + error.message);
       return [false, error.message];
+    }
+  }
+
+  async function deleteVendorDoc(uid, name) {
+    if (!uid || !name) {
+      setError("No vendor to delete");
+      return;
+    }
+    const consent = showConfirmDialog(
+      `Do you really want to delete this vendor: "${name}" ?`
+    );
+    if (!consent) {
+      return;
+    }
+
+    try {
+     // await deleteVendorData(cityRef.current.value, uid);
+      removeVendorFromProfileList(uid);
+      alert("Vendor deleted successfully");
+    } catch (err) {
+      setError(err.message);
+      scrollToTop();
+    }
+  }
+
+  function removeVendorFromProfileList(uid) {
+    if (vendorProfiles.length === 1) {
+      setVendorProfiles([]);
+      setSearchByContact(true);
+      getVendorFormRef.current.reset();
+    } else {
+      /* set state with array filter logic
+       to listen to setState callback; implement useEffect with
+       the state object as part of dependency list */
+      setVendorProfiles(vendorProfiles.filter((item) => item.uid !== uid));
     }
   }
 
@@ -117,7 +160,7 @@ export default function ModifyVendor() {
                 minLength="10"
                 maxLength="10"
                 placeholder="10-digit mobile number"
-                defaultValue="9600163600"
+                defaultValue=""
               />
             </Form.Group>
 
@@ -133,7 +176,7 @@ export default function ModifyVendor() {
                 ref={nameRef}
                 minLength="3"
                 maxLength="40"
-                defaultValue="Pal"
+                defaultValue=""
                 placeholder="Business Name .. keep it exact"
               />
             </Form.Group>
@@ -164,11 +207,12 @@ export default function ModifyVendor() {
               <VendorDetailCardView
                 key={profile.uid}
                 currVendor={profile}
-                modifyVendorCallback={modifyVendorProfileData}
+                modifyVendorCallback={modifyVendorProfile}
                 formatCasing={formatTextCasing}
                 formatCategoryCasing={formatCaseForCommaSeparatedItems}
                 isPureNumber={isPureNumber}
                 scrollTop={scrollToTop}
+                deleteProfileCallback={deleteVendorDoc}
               ></VendorDetailCardView>
             </div>
           );

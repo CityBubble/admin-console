@@ -4,7 +4,7 @@ import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
 import { Link } from "react-router-dom";
 import VendorListView from "../../components/vendor/VendorListView";
 import VendorDetailView from "../../components/vendor/VendorDetailView";
-import { useUtility } from "../../util/Utility"
+import { useUtility } from "../../util/Utility";
 
 export default function ViewVendors() {
   const searchFormRef = useRef();
@@ -28,7 +28,7 @@ export default function ViewVendors() {
   const [hasMore, setMore] = useState(false);
 
   const { getVendors } = useVendorDataStore();
-  const { formatTextCasing , scrollToTop} = useUtility();
+  const { formatTextCasing, scrollToTop } = useUtility();
 
   function constructFilterCriteria() {
     let filterObj = {};
@@ -114,6 +114,7 @@ export default function ViewVendors() {
     e.preventDefault();
 
     setError("");
+    setSelectedVendor(null);
     setLoading(true);
 
     const filterObj = constructFilterCriteria();
