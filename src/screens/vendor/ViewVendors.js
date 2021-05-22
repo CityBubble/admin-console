@@ -10,6 +10,7 @@ export default function ViewVendors() {
   const searchFormRef = useRef();
   const cityRef = useRef();
   const statusRef = useRef();
+  const profileStatusRef = useRef();
   const categoryRef = useRef();
   const areaRef = useRef();
   const timelineRef = useRef();
@@ -33,8 +34,12 @@ export default function ViewVendors() {
   function constructFilterCriteria() {
     let filterObj = {};
     const status = statusRef.current.value.trim();
-    if (status.length > 2) {
+    if (status.length > 0) {
       filterObj["status"] = status;
+    }
+    const profielStatus = profileStatusRef.current.value.trim();
+    if (profielStatus.length > 0) {
+      filterObj["profile_status"] = profielStatus;
     }
     const area = areaRef.current.value.trim();
     if (area.length > 2) {
@@ -205,10 +210,22 @@ export default function ViewVendors() {
               <div>
                 <Form.Group id="status">
                   <Form.Control as="select" ref={statusRef}>
-                    <option value="">Select profile status (optional..)</option>
+                    <option value="">
+                      Select verification status (optional..)
+                    </option>
                     <option value="queued">Queued</option>
                     <option value="review">Under Review</option>
                     <option value="active">Active</option>
+                  </Form.Control>
+                </Form.Group>
+
+                <Form.Group id="profile_status">
+                  <Form.Control as="select" ref={profileStatusRef}>
+                    <option value="">Select profile status (optional..)</option>
+                    <option value="verification">Under Verification</option>
+                    <option value="subscribed">Subscribed</option>
+                    <option value="unsubscribed">Un-Subscribed</option>
+                    <option value="freeze">Freeze</option>
                   </Form.Control>
                 </Form.Group>
 
