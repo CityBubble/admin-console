@@ -1,4 +1,4 @@
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import Collection from "../collectionConstants";
 
 export function useVendorDataStore() {
@@ -7,6 +7,10 @@ export function useVendorDataStore() {
 
 function getCollectionRef(cityCode) {
   return db.collection(cityCode + "_" + Collection.COLL_VENDORS);
+}
+
+function getVendorStorageRef(cityCode, uid) {
+  return storage.ref(`/${Collection.COLL_VENDORS}/${cityCode}/${uid}`);
 }
 
 async function getVendors(cityCode, limit, filterObj) {
@@ -58,44 +62,6 @@ function constructQuery(query, filterObj) {
   return query;
 }
 
-async function addNewVendorProfile(vendorObj, checkForMobileUniqness) {
-  console.log("addNewVendorProfile for " + JSON.stringify(vendorObj));
-  if (!vendorObj) {
-    throw new Error("invalid vendor Obj");
-  }
-  if (
-    !vendorObj.address ||
-    !vendorObj.address.city ||
-    !vendorObj.address.city.code
-  ) {
-    throw new Error("Missing city code");
-  }
-
-  const vendorCollRef = getCollectionRef(vendorObj.address.city.code);
-  if (checkForMobileUniqness) {
-    console.log("checkForMobileUniqness");
-    const snapshot = await vendorCollRef
-      .where("contact", "==", vendorObj.contact)
-      .limit(1)
-      .get();
-
-    if (!snapshot.empty) {
-      console.log("old vendor exists");
-      let oldVendor = {};
-      snapshot.forEach((doc) => {
-        oldVendor = doc.data();
-        return;
-      });
-      console.log("OLD VENDOR = " + JSON.stringify(oldVendor));
-      return [true, oldVendor.name];
-    }
-  }
-  console.log("post unique check");
-  await vendorCollRef.add(vendorObj);
-  console.log("new vendor added successfully");
-  return [false, ""];
-}
-
 async function getVendorBySearchField(cityCode, searchField, searchVal) {
   console.log("getVendorBySearchField for city - " + cityCode);
   if (!cityCode || !searchField || !searchVal) {
@@ -110,13 +76,13 @@ async function getVendorBySearchField(cityCode, searchField, searchVal) {
     .orderBy("timeline.request_date", "asc")
     .get();
   if (snapshot.empty) {
-    throw new Error("No record found ..");
+    /*change in this error msg should be reconciled with CreateVendorProfile.js
+    for it checks for the string matching.*/
+    throw new Error("No record found!");
   }
-
   let vendors = [];
   snapshot.forEach((doc) => {
     vendors.push({ uid: doc.id, ...doc.data() });
-    return;
   });
   return vendors;
 }
@@ -141,6 +107,50 @@ async function deleteVendorData(cityCode, uid) {
   const vendorDocRef = getCollectionRef(cityCode).doc(uid);
   await vendorDocRef.delete();
   console.log(`${uid} deleted successfully`);
+}
+
+async function addNewVendorProfile(vendorObj) {
+  console.log("addNewVendorProfile for " + JSON.stringify(vendorObj));
+  if (!vendorObj) {
+    throw new Error("invalid vendor Obj");
+  }
+  if (
+    !vendorObj.address ||
+    !vendorObj.address.city ||
+    !vendorObj.address.city.code
+  ) {
+    throw new Error("Missing city code");
+  }
+  const vendorCollRef = getCollectionRef(vendorObj.address.city.code);
+  const vendorDocRef = vendorCollRef.doc();
+  console.log("ref id => " + vendorDocRef.id);
+  if (vendorObj.logoUrl) {
+    const fileUrl = await uploadVendorLogo(
+      vendorObj.address.city.code,
+      vendorDocRef.id,
+      vendorObj.logoUrl
+    );
+    if (fileUrl) {
+      vendorObj["logoUrl"] = fileUrl;
+      await vendorDocRef.set(vendorObj);
+      console.log("New vendor added successfully");
+    } else {
+      throw new Error("Could not obtain file URL. Try later");
+    }
+  } else {
+    await vendorDocRef.set(vendorObj);
+    console.log("New vendor added successfully");
+  }
+}
+
+async function uploadVendorLogo(cityCode, docId, imgFile) {
+  console.log("UPLOADING IMAGE");
+  const storageRef = getVendorStorageRef(cityCode, docId);
+  const logoImgRef = storageRef.child("logo");
+  await logoImgRef.put(imgFile);
+  const fileUrl = await logoImgRef.getDownloadURL();
+  console.log("OBTAINED URL => " + fileUrl);
+  return fileUrl;
 }
 
 const actions = {

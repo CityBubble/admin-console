@@ -197,7 +197,6 @@ export default function ViewVendors() {
                 <strong>Records per Search:</strong>
               </FormLabel>
               <Form.Control as="select" ref={docsLimitRef}>
-                <option value="2">2</option>
                 <option value="5">5</option>
                 <option value="10">10</option>
                 <option value="25">25</option>
