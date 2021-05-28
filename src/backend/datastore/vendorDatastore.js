@@ -6,7 +6,10 @@ export function useVendorDataStore() {
 }
 
 function getCollectionRef(cityCode) {
-  return db.collection(cityCode + "_" + Collection.COLL_VENDORS);
+  return db
+    .collection(Collection.COLL_VENDORS)
+    .doc(cityCode)
+    .collection(Collection.SUB_COLL_VENDORS);
 }
 
 function getVendorStorageRef(cityCode, uid) {
