@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
-import VendorDetailCardView from "../../components/vendor/VendorDetailCardView";
+import VendorDetailFormView from "../../components/vendor/VendorDetailFormView";
 import { useUtility } from "../../util/Utility";
 
 export default function ModifyVendor() {
@@ -87,7 +87,7 @@ export default function ModifyVendor() {
     }
 
     try {
-     // await deleteVendorData(cityRef.current.value, uid);
+      // await deleteVendorData(cityRef.current.value, uid);
       removeVendorFromProfileList(uid);
       alert("Vendor deleted successfully");
     } catch (err) {
@@ -204,7 +204,7 @@ export default function ModifyVendor() {
         {vendorProfiles.map((profile) => {
           return (
             <div className="col mt-3" key={profile.uid}>
-              <VendorDetailCardView
+              <VendorDetailFormView
                 key={profile.uid}
                 currVendor={profile}
                 modifyVendorCallback={modifyVendorProfile}
@@ -213,7 +213,7 @@ export default function ModifyVendor() {
                 isPureNumber={isPureNumber}
                 scrollTop={scrollToTop}
                 deleteProfileCallback={deleteVendorDoc}
-              ></VendorDetailCardView>
+              ></VendorDetailFormView>
             </div>
           );
         })}

@@ -1,8 +1,8 @@
 import React, { Component } from "react";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import { Form, Button, Card, Alert, Image } from "react-bootstrap";
 import Constants from "../../util/Constants";
 
-export default class VendorDetailCardView extends Component {
+export default class VendorDetailFormView extends Component {
   tempAddrObj = null;
 
   constructor(props) {
@@ -14,6 +14,8 @@ export default class VendorDetailCardView extends Component {
       successMsg: "",
       loading: false,
       vendor: this.props.currVendor,
+      currNewLogoImg: null,
+      currPreviewNewLogoImgUrl: null,
     };
   }
 
@@ -27,6 +29,8 @@ export default class VendorDetailCardView extends Component {
     this.fullAddressRef = React.createRef();
     this.profileStatusRef = React.createRef();
   };
+
+  uploadToCloud = () => {};
 
   render() {
     if (this.state.vendor) {
@@ -58,6 +62,11 @@ export default class VendorDetailCardView extends Component {
   resetForm = (clearMsgs = true) => {
     this.modifyVendorFormRef.current.reset();
     this.profileStatusRef.current.value = this.state.vendor.profile_status;
+    this.setState({
+      currNewLogoImg: null,
+      currPreviewNewLogoImgUrl: null,
+    });
+
     if (clearMsgs) {
       this.clearMessageFields();
     }
@@ -68,6 +77,15 @@ export default class VendorDetailCardView extends Component {
     this.setState({
       errorMsg: "",
       successMsg: "",
+    });
+  };
+
+  selectNewLogoImgFile = (e) => {
+    e.preventDefault();
+    let logoUrl = URL.createObjectURL(e.target.files[0]);
+    this.setState({
+      currNewLogoImg: e.target.files[0],
+      currPreviewNewLogoImgUrl: logoUrl,
     });
   };
 
@@ -117,6 +135,11 @@ export default class VendorDetailCardView extends Component {
     modifiedVendor.address.full_address = this.fullAddressRef.current.value;
     modifiedVendor.profile_status = this.profileStatusRef.current.value;
     modifiedVendor.timeline.lastModifiedOn = new Date();
+
+    if (this.state.currNewLogoImg) {
+      modifiedVendor.newProfileImg = this.state.currNewLogoImg;
+    }
+
     return modifiedVendor;
   };
 
@@ -208,6 +231,11 @@ export default class VendorDetailCardView extends Component {
     if (
       this.state.vendor.profile_status !== this.profileStatusRef.current.value
     ) {
+      isDataModified = true;
+    }
+
+    //validate new Profile image url
+    if (this.state.currNewLogoImg && this.state.currPreviewNewLogoImgUrl) {
       isDataModified = true;
     }
 
@@ -322,6 +350,52 @@ export default class VendorDetailCardView extends Component {
                 <option value="freeze">Freeze</option>
               </Form.Control>
             </Form.Group>
+            <div className="row">
+              {vendor.logoUrl && (
+                <div className="col">
+                  <h5>Profile Logo</h5>
+
+                  <Image
+                    src={vendor.logoUrl}
+                    rounded
+                    style={{ width: 500, height: 300 }}
+                  />
+                </div>
+              )}
+
+              <div className="col">
+                <div className="row">
+                  <div className="col">
+                    <h5>Add New Logo</h5>
+                  </div>
+                  <div className="col">
+                    <Form.Group>
+                      <Form.File id="newLogoImg" custom className="mt-3">
+                        <Form.File.Input
+                          isValid
+                          onChange={this.selectNewLogoImgFile}
+                          accept="image/*"
+                        />
+                        <Form.File.Label data-browse="Browse" />
+                        <Form.Control.Feedback type="valid">
+                          {this.state.currNewLogoImg &&
+                            this.state.currNewLogoImg.name}
+                        </Form.Control.Feedback>
+                      </Form.File>
+                    </Form.Group>
+                  </div>
+                </div>
+
+                {this.state.currPreviewNewLogoImgUrl && (
+                  <Image
+                    src={this.state.currPreviewNewLogoImgUrl}
+                    rounded
+                    style={{ width: 500, height: 300 }}
+                  />
+                )}
+              </div>
+            </div>
+
             <Button
               disabled={this.state.loading}
               className="w-100 btn btn-warning text-white mt-3"

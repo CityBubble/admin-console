@@ -92,6 +92,23 @@ async function modifyVendorData(cityCode, modifiedVendor) {
   if (!cityCode || !modifiedVendor) {
     throw new Error("Invalid Arguments");
   }
+
+  if (modifiedVendor.newProfileImg) {
+    console.log("profile image found");
+    const fileUrl = await uploadVendorLogo(
+      cityCode,
+      modifiedVendor.uid,
+      modifiedVendor.newProfileImg
+    );
+    if (fileUrl) {
+      modifiedVendor["logoUrl"] = fileUrl;
+      delete modifiedVendor.newProfileImg;
+      console.log("Image uploaded successfully");
+    } else {
+      throw new Error("Could not obtain file URL. Try later");
+    }
+  }
+
   const vendorDocRef = getCollectionRef(cityCode).doc(modifiedVendor.uid);
   // call cloud function on edit event to update all ads data with latest vals
   await vendorDocRef.update(modifiedVendor);

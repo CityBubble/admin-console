@@ -27,7 +27,7 @@ export default function CreateVendorProfile() {
     scrollToTop,
   } = useUtility();
 
-  const [currLogoImg, setCurrLogo] = useState(undefined);
+  const [currLogoImg, setCurrLogo] = useState(null);
   const [currPreviewLogoImgUrl, setCurrLogoPreview] = useState(null);
 
   useEffect(() => {
@@ -183,7 +183,7 @@ export default function CreateVendorProfile() {
       "Vendor Profile Created Successfully and Available for final review"
     );
     formRef.current.reset();
-    setCurrLogo(undefined);
+    setCurrLogo(null);
     setLoading(false);
     scrollToTop();
   }
@@ -290,7 +290,7 @@ export default function CreateVendorProfile() {
               rounded
               style={{ width: 500, height: 300 }}
             />
-          )}{" "}
+          )}
           <Button disabled={loading} className="w-100 mt-3" type="submit">
             Create Profile
           </Button>
