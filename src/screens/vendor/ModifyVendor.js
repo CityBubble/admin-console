@@ -46,7 +46,7 @@ export default function ModifyVendor() {
     try {
       const searchVal = searchByContact
         ? contactRef.current.value
-        : nameRef.current.value;
+        : formatTextCasing(nameRef.current.value);
       const vendors = await getVendorBySearchField(
         cityRef.current.value,
         searchFieldRef.current.value,
