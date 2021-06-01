@@ -7,13 +7,13 @@ export function useVendorDataStore() {
 
 function getCollectionRef(cityCode) {
   return db
-    .collection(Collection.COLL_VENDORS)
+    .collection(Collection.COLL_CITIES)
     .doc(cityCode)
     .collection(Collection.SUB_COLL_VENDORS);
 }
 
 function getVendorStorageRef(cityCode, uid) {
-  return storage.ref(`/${Collection.COLL_VENDORS}/${cityCode}/${uid}`);
+  return storage.ref(`/${cityCode}/${Collection.COLL_VENDORS}/${uid}`);
 }
 
 async function getVendors(cityCode, limit, filterObj) {
