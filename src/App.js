@@ -12,6 +12,8 @@ import VendorActions from "./screens/vendor/VendorActions";
 import ViewVendors from "./screens/vendor/ViewVendors";
 import CreateVendorProfile from "./screens/vendor/CreateVendorProfile";
 import ModifyVendor from "./screens/vendor/ModifyVendor";
+import AdsActions from "./screens/ads/AdsActions";
+import CreateAd from "./screens/ads/CreateAd";
 
 function App() {
   return (
@@ -23,12 +25,14 @@ function App() {
               <Route path="/login" component={Login} />
               <Route path="/forgot-password" component={PasswordReset} />
               <SecureRoute exact path="/" component={Dashboard} />
+
               <SecureRoute
                 path="/internal_users"
                 component={InternalUserAction}
               />
               <SecureRoute path="/createUser" component={CreateUser} />
               <SecureRoute path="/modifyUser" component={ModifyUser} />
+
               <SecureRoute path="/vendors" component={VendorActions} />
               <SecureRoute path="/viewVendors" component={ViewVendors} />
               <SecureRoute
@@ -36,6 +40,9 @@ function App() {
                 component={CreateVendorProfile}
               />
               <SecureRoute path="/modifyVendor" component={ModifyVendor} />
+
+              <SecureRoute path="/ads" component={AdsActions} />
+              <SecureRoute path="/createAd" component={CreateAd} />
             </Switch>
           </AuthProvider>
         </Router>

@@ -4,4 +4,5 @@ module.exports = Object.freeze({
   PINCODE_LENGTH: 6,
   VENDOR_PROFILE_INITIAL_VERIFY_STATUS: "queued",
   VENDOR_PROFILE_INITIAL_SUBSCRIPTIONS_STATUS: "verification",
+  ADS_INITIAL_VERIFY_STATUS: "queued",
 });

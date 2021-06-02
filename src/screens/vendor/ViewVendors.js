@@ -220,7 +220,9 @@ export default function ViewVendors() {
 
                 <Form.Group id="subscription_status">
                   <Form.Control as="select" ref={subscriptionStatusRef}>
-                    <option value="">Select subcription status (optional..)</option>
+                    <option value="">
+                      Select subcription status (optional..)
+                    </option>
                     <option value="verification">Under Verification</option>
                     <option value="subscribed">Subscribed</option>
                     <option value="unsubscribed">Un-Subscribed</option>
