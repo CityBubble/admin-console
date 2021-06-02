@@ -68,8 +68,8 @@ export default class VendorDetailView extends Component {
               </td>
             </tr>
             <tr>
-              <td style={{ color: "#ffc93c" }}>Profile Status</td>
-              <td>{vendor.profile_status}</td>
+              <td style={{ color: "#ffc93c" }}>Subscription</td>
+              <td>{vendor.subscription.status}</td>
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Requested On</td>

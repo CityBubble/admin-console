@@ -27,7 +27,7 @@ export default class VendorDetailFormView extends Component {
     this.areaRef = React.createRef();
     this.pincodeRef = React.createRef();
     this.fullAddressRef = React.createRef();
-    this.profileStatusRef = React.createRef();
+    this.subscriptionStatusRef = React.createRef();
   };
 
   uploadToCloud = () => {};
@@ -61,7 +61,7 @@ export default class VendorDetailFormView extends Component {
 
   resetForm = (clearMsgs = true) => {
     this.modifyVendorFormRef.current.reset();
-    this.profileStatusRef.current.value = this.state.vendor.profile_status;
+    this.subscriptionStatusRef.current.value = this.state.vendor.subscription.status;
     this.setState({
       currNewLogoImg: null,
       currPreviewNewLogoImgUrl: null,
@@ -133,7 +133,7 @@ export default class VendorDetailFormView extends Component {
     );
     modifiedVendor.address.pincode = this.pincodeRef.current.value;
     modifiedVendor.address.full_address = this.fullAddressRef.current.value;
-    modifiedVendor.profile_status = this.profileStatusRef.current.value;
+    modifiedVendor.subscription.status = this.subscriptionStatusRef.current.value;
     modifiedVendor.timeline.lastModifiedOn = new Date();
 
     if (this.state.currNewLogoImg) {
@@ -227,9 +227,10 @@ export default class VendorDetailFormView extends Component {
       }
     }
 
-    //validate profile status
+    //validate subscription status
     if (
-      this.state.vendor.profile_status !== this.profileStatusRef.current.value
+      this.state.vendor.subscription.status !==
+      this.subscriptionStatusRef.current.value
     ) {
       isDataModified = true;
     }
@@ -336,13 +337,13 @@ export default class VendorDetailFormView extends Component {
               <Form.Label>Verification Status</Form.Label>
               <Form.Control type="text" readOnly defaultValue={vendor.status} />
             </Form.Group>
-            <Form.Group id="profile_status">
-              <Form.Label>Profile Status</Form.Label>
+            <Form.Group id="subscription_status">
+              <Form.Label>Subscription</Form.Label>
               <Form.Control
                 as="select"
-                ref={this.profileStatusRef}
+                ref={this.subscriptionStatusRef}
                 required
-                defaultValue={vendor.profile_status}
+                defaultValue={vendor.subscription.status}
               >
                 <option value="verification">Under Verification</option>
                 <option value="subscribed">Subscribed</option>

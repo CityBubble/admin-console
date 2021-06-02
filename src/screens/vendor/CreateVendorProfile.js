@@ -126,6 +126,9 @@ export default function CreateVendorProfile() {
         setLoading(false);
         scrollToTop();
       }
+    } else {
+      scrollToTop();
+      setLoading(false);
     }
   }
 
@@ -166,7 +169,9 @@ export default function CreateVendorProfile() {
           name: cityVals[1],
         },
       },
-      profile_status: Constants.VENDOR_PROFILE_INITIAL_PROFILE_STATUS,
+      subscription: {
+        status: Constants.VENDOR_PROFILE_INITIAL_SUBSCRIPTIONS_STATUS,
+      },
       status: Constants.VENDOR_PROFILE_INITIAL_VERIFY_STATUS,
       timeline: {
         request_date: new Date(),

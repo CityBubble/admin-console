@@ -10,7 +10,7 @@ export default function ViewVendors() {
   const searchFormRef = useRef();
   const cityRef = useRef();
   const statusRef = useRef();
-  const profileStatusRef = useRef();
+  const subscriptionStatusRef = useRef();
   const categoryRef = useRef();
   const areaRef = useRef();
   const timelineRef = useRef();
@@ -37,9 +37,9 @@ export default function ViewVendors() {
     if (status.length > 0) {
       filterObj["status"] = status;
     }
-    const profielStatus = profileStatusRef.current.value.trim();
-    if (profielStatus.length > 0) {
-      filterObj["profile_status"] = profielStatus;
+    const subscriptionStatus = subscriptionStatusRef.current.value.trim();
+    if (subscriptionStatus.length > 0) {
+      filterObj["subscription_status"] = subscriptionStatus;
     }
     const area = areaRef.current.value.trim();
     if (area.length > 2) {
@@ -218,9 +218,9 @@ export default function ViewVendors() {
                   </Form.Control>
                 </Form.Group>
 
-                <Form.Group id="profile_status">
-                  <Form.Control as="select" ref={profileStatusRef}>
-                    <option value="">Select profile status (optional..)</option>
+                <Form.Group id="subscription_status">
+                  <Form.Control as="select" ref={subscriptionStatusRef}>
+                    <option value="">Select subcription status (optional..)</option>
                     <option value="verification">Under Verification</option>
                     <option value="subscribed">Subscribed</option>
                     <option value="unsubscribed">Un-Subscribed</option>

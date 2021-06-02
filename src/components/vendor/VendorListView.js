@@ -41,7 +41,7 @@ export default class VendorListView extends Component {
                   <th>Area</th>
                   <th>Category</th>
                   <th>Verification Status</th>
-                  <th>Profile Status</th>
+                  <th>Subscription</th>
                   <th>Request Date</th>
                 </tr>
               </thead>
@@ -65,7 +65,7 @@ export default class VendorListView extends Component {
                       >
                         {vendor.status}
                       </td>
-                      <td>{vendor.profile_status}</td>
+                      <td>{vendor.subscription.status}</td>
                       <td>
                         {vendor.timeline.request_date
                           .toDate()

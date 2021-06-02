@@ -13,7 +13,7 @@ function getCollectionRef(cityCode) {
 }
 
 function getVendorStorageRef(cityCode, uid) {
-  return storage.ref(`/${cityCode}/${Collection.COLL_VENDORS}/${uid}`);
+  return storage.ref(`/${cityCode}/${Collection.SUB_COLL_VENDORS}/${uid}`);
 }
 
 async function getVendors(cityCode, limit, filterObj) {
@@ -40,8 +40,12 @@ function constructQuery(query, filterObj) {
     if (filterObj.status) {
       query = query.where("status", "==", filterObj.status);
     }
-    if (filterObj.profile_status) {
-      query = query.where("profile_status", "==", filterObj.profile_status);
+    if (filterObj.subscription_status) {
+      query = query.where(
+        "subscription.status",
+        "==",
+        filterObj.subscription_status
+      );
     }
     if (filterObj.area) {
       query = query.where("address.area", "==", filterObj.area);
