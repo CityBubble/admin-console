@@ -120,6 +120,7 @@ export default function CreateaAd() {
       vendor: {
         uid: activeVendor.uid,
         name: activeVendor.name,
+        contact: activeVendor.contact,
         category: activeVendor.category,
         address: activeVendor.address,
       },

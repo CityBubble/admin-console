@@ -35,6 +35,60 @@ async function addNewAd(adObj) {
   }
 }
 
+async function getAds(cityCode, limit, filterObj) {
+  console.log("getAds for city - " + cityCode);
+  let query = getCollectionRef(cityCode);
+
+  query = constructQuery(query, filterObj);
+  const snapshot = await query.limit(limit).get();
+
+  let ads = [];
+  let lastDoc = {};
+  snapshot.forEach((doc) => {
+    let obj = doc.data();
+    ads.push({ uid: doc.id, ...obj });
+    lastDoc = doc;
+  });
+  console.log(ads.length);
+  console.log(ads);
+  return [ads, lastDoc];
+}
+
+function constructQuery(query, filterObj) {
+  if (filterObj) {
+    if (filterObj.vendor) {
+      query = query.where("vendor.name", "==", filterObj.vendor);
+    }
+    if (filterObj.status) {
+      query = query.where("ad_status.status", "==", filterObj.status);
+    }
+    if (filterObj.area) {
+      query = query.where("vendor.address.area", "==", filterObj.area);
+    }
+    if (filterObj.category) {
+      query = query.where(
+        "vendor.category",
+        "array-contains",
+        filterObj.category
+      );
+    }
+    if (filterObj.timeline) {
+      query = query
+        .orderBy(`timeline.${filterObj.timeline.field}`, "asc")
+        .startAt(filterObj.timeline.start_date)
+        .endAt(filterObj.timeline.end_date);
+    } else {
+      query = query.orderBy("timeline.request_date", "asc");
+    }
+    if (filterObj.lastDoc) {
+      console.log("last ad doc present");
+      query = query.startAfter(filterObj.lastDoc);
+    }
+  }
+  return query;
+}
+
 const actions = {
   addNewAd,
+  getAds,
 };

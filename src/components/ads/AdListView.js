@@ -1,17 +1,17 @@
 import { Component } from "react";
 import { Table } from "react-bootstrap";
 
-export default class VendorListView extends Component {
+export default class AdsListView extends Component {
   render() {
-    const vendorList = this.props.vendorList;
-    return this.renderVendors(vendorList);
+    const adsList = this.props.adsList;
+    return this.renderAds(adsList);
   }
 
-  renderVendors = (vendors) => {
+  renderAds = (ads) => {
     return (
       <div className="container mt-3">
         <hr />
-        {vendors && vendors.length > 0 && (
+        {ads && ads.length > 0 && (
           <div>
             <Table
               responsive="lg"
@@ -23,38 +23,38 @@ export default class VendorListView extends Component {
             >
               <thead style={{ color: "#ffc93c" }}>
                 <tr>
-                  {/* <th>Id</th> */}
-                  <th>Name</th>
+                  <th>Vendor</th>
+                  <th>Tagline</th>
                   <th>Area</th>
                   <th>Category</th>
-                  <th>Status</th>
-                  <th>Subscription</th>
+                  <th>Ad Status</th>
                   <th>Request Date</th>
                 </tr>
               </thead>
               <tbody>
-                {vendors.map((vendor, index) => {
+                {ads.map((currentAd, index) => {
                   return (
                     <tr
                       key={index}
                       onClick={() => {
-                        this.props.onVendorClicked(vendor);
+                        this.props.onAdClicked(currentAd);
                       }}
                     >
-                      {/* <td>{vendor.uid}</td> */}
-                      <td>{vendor.name}</td>
-                      <td>{vendor.address.area}</td>
-                      <td>{vendor.category.join(", ")}</td>
+                      <td>{currentAd.vendor.name}</td>
+                      <td>{currentAd.raw.tagline}</td>
+                      <td>{currentAd.vendor.address.area}</td>
+                      <td>{currentAd.vendor.category.join(", ")}</td>
                       <td
                         style={{
-                          color: this.props.getStatusTextColor(vendor.status),
+                          color: this.props.getStatusTextColor(
+                            currentAd.ad_status.status
+                          ),
                         }}
                       >
-                        {vendor.status}
+                        {currentAd.ad_status.status}
                       </td>
-                      <td>{vendor.subscription.status}</td>
                       <td>
-                        {vendor.timeline.request_date
+                        {currentAd.timeline.request_date
                           .toDate()
                           .toString()
                           .substring(3, 15)}
@@ -64,7 +64,7 @@ export default class VendorListView extends Component {
                 })}
               </tbody>
             </Table>
-            <strong>RECORDS DISPLAYED :</strong> {vendors.length}
+            <strong>RECORDS DISPLAYED :</strong> {ads.length}
           </div>
         )}
       </div>

@@ -1,19 +1,19 @@
 import React, { useRef, useState } from "react";
 import { Form, Button, Card, Alert, FormLabel } from "react-bootstrap";
-import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
 import { Link } from "react-router-dom";
-import VendorListView from "../../components/vendor/VendorListView";
-import VendorDetailView from "../../components/vendor/VendorDetailView";
+import { useAdDataStore } from "../../backend/datastore/adDatastore";
+import AdsListView from "../../components/ads/AdListView";
 import { useUtility } from "../../util/Utility";
 import { useUIUtility } from "../../util/UIUtility";
+import AdDetailView from "../../components/ads/AdDetailView";
 
-export default function ViewVendors() {
+export default function ViewAds() {
   const searchFormRef = useRef();
   const cityRef = useRef();
   const statusRef = useRef();
-  const subscriptionStatusRef = useRef();
   const categoryRef = useRef();
   const areaRef = useRef();
+  const vendorNameRef = useRef();
   const timelineRef = useRef();
   const startDateRef = useRef();
   const endDateRef = useRef();
@@ -21,32 +21,55 @@ export default function ViewVendors() {
 
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [vendors, setVendors] = useState([]);
-  const [selectedVendor, setSelectedVendor] = useState();
   const [cityCode, setCityCode] = useState("null");
   const [timeline, setTimeline] = useState("");
+  const [ads, setAds] = useState([]);
+  const [selectedAd, setSelectedAd] = useState();
   const [searchFilter, setFilter] = useState(null);
   const [lastDoc, setLastDoc] = useState();
   const [hasMore, setMore] = useState(false);
 
-  const { getVendors } = useVendorDataStore();
   const { formatTextCasing, scrollToTop } = useUtility();
-  const { getStatusTextColor, getSubscriptionStatusTextColor } = useUIUtility();
+  const { getStatusTextColor } = useUIUtility();
+  const { getAds } = useAdDataStore();
+
+  function handleViewAds(e) {
+    console.log("handle ViewAds");
+    e.preventDefault();
+
+    setError("");
+    setSelectedAd(null);
+    setLoading(true);
+
+    const filterObj = constructFilterCriteria();
+    if (filterObj === undefined || filterObj === null) {
+      console.log("aborting search request due to error");
+      setLoading(false);
+      return;
+    }
+    setAds([]);
+    performSearch(filterObj);
+    setLoading(false);
+  }
 
   function constructFilterCriteria() {
     let filterObj = {};
+
+    const vendorName = vendorNameRef.current.value.trim();
+    if (vendorName.length > 0) {
+      filterObj["vendor"] = formatTextCasing(vendorName);
+    }
+
     const status = statusRef.current.value.trim();
     if (status.length > 0) {
       filterObj["status"] = status;
     }
-    const subscriptionStatus = subscriptionStatusRef.current.value.trim();
-    if (subscriptionStatus.length > 0) {
-      filterObj["subscription_status"] = subscriptionStatus;
-    }
+
     const area = areaRef.current.value.trim();
     if (area.length > 2) {
       filterObj["area"] = formatTextCasing(area);
     }
+
     const category = categoryRef.current.value.trim();
     if (category.length > 2) {
       filterObj["category"] = formatTextCasing(category);
@@ -93,7 +116,32 @@ export default function ViewVendors() {
       timelineObj["end_date"] = endDate;
       filterObj["timeline"] = timelineObj;
     }
+
+    console.log("AD FILTER OBJ = " + JSON.stringify(filterObj));
     return filterObj;
+  }
+
+  async function performSearch(filterObj) {
+    console.log("perform ad search");
+    try {
+      setFilter(filterObj);
+      let [list, last] = await getAds(
+        cityRef.current.value,
+        docsLimitRef.current.value,
+        filterObj
+      );
+      if (list.length > 0) {
+        setAds((ads) => [...ads, ...list]);
+        setLastDoc(last);
+        setMore(list.length === parseInt(docsLimitRef.current.value));
+      } else {
+        setMore(false);
+        setError("No records found ...");
+      }
+    } catch (err) {
+      console.log(err);
+      setError(err.message);
+    }
   }
 
   async function onMorePress() {
@@ -112,76 +160,27 @@ export default function ViewVendors() {
     setTimeline("");
     setMore(false);
     setError("");
-    setSelectedVendor(null);
-    setVendors([]);
+    setSelectedAd(null);
+    setAds([]);
   }
 
-  function handleViewVendors(e) {
-    console.log("handle ViewVendors");
-    e.preventDefault();
-
-    setError("");
-    setSelectedVendor(null);
-    setLoading(true);
-
-    const filterObj = constructFilterCriteria();
-    if (filterObj === undefined || filterObj === null) {
-      console.log("aborting search request due to error");
-      setLoading(false);
-      return;
+  function handleAdClick(clickedAd) {
+    console.log("handle ad click");
+    if (clickedAd) {
+      setSelectedAd(clickedAd);
+      scrollToTop();
+    } else {
+      setSelectedAd(null);
     }
-    setVendors([]);
-    performSearch(filterObj);
-    setLoading(false);
-  }
-
-  async function performSearch(filterObj) {
-    try {
-      setFilter(filterObj);
-      let [list, last] = await getVendors(
-        cityRef.current.value,
-        docsLimitRef.current.value,
-        filterObj
-      );
-      if (list.length > 0) {
-        setVendors((vendors) => [...vendors, ...list]);
-        setLastDoc(last);
-        setMore(list.length === parseInt(docsLimitRef.current.value));
-      } else {
-        setMore(false);
-        setError("No records found ...");
-      }
-    } catch (err) {
-      console.log(err);
-      setError(err.message);
-    }
-  }
-
-  function renderMainView() {
-    return (
-      <div className="row">
-        <div className="col">{renderFilterCriteria()}</div>
-
-        <div className="col">
-          {selectedVendor && (
-            <VendorDetailView
-              currVendor={selectedVendor}
-              getStatusTextColor={getStatusTextColor}
-              getSubscriptionStatusTextColor={getSubscriptionStatusTextColor}
-            ></VendorDetailView>
-          )}
-        </div>
-      </div>
-    );
   }
 
   function renderFilterCriteria() {
     return (
       <Card>
         <Card.Body>
-          <h3 className="text-center mb-4">View Vendors </h3>
+          <h3 className="text-center mb-4">View Ads </h3>
           {error && <Alert variant="danger">{error}</Alert>}
-          <Form onSubmit={handleViewVendors} ref={searchFormRef}>
+          <Form onSubmit={handleViewAds} ref={searchFormRef}>
             <Form.Group id="city">
               <Form.Control
                 as="select"
@@ -213,26 +212,24 @@ export default function ViewVendors() {
 
             {cityCode && cityCode !== "null" && (
               <div>
-                <Form.Group id="status">
-                  <Form.Control as="select" ref={statusRef}>
-                    <option value="">
-                      Select verification status (optional..)
-                    </option>
-                    <option value="queued">Queued</option>
-                    <option value="review">Under Review</option>
-                    <option value="active">Verified</option>
-                  </Form.Control>
+                <Form.Group id="vendor">
+                  <Form.Control
+                    type="text"
+                    placeholder="Vendor name .."
+                    ref={vendorNameRef}
+                    minLength="3"
+                    maxLength="20"
+                  />
                 </Form.Group>
 
-                <Form.Group id="subscription_status">
-                  <Form.Control as="select" ref={subscriptionStatusRef}>
-                    <option value="">
-                      Select subcription status (optional..)
-                    </option>
-                    <option value="verification">Under Verification</option>
-                    <option value="subscribed">Subscribed</option>
-                    <option value="unsubscribed">Un-Subscribed</option>
+                <Form.Group id="status">
+                  <Form.Control as="select" ref={statusRef}>
+                    <option value="">Select status</option>
+                    <option value="queued">Queued</option>
+                    <option value="review">Under Review</option>
+                    <option value="active">Active</option>
                     <option value="freeze">Freeze</option>
+                    <option value="expired">Expired</option>
                   </Form.Control>
                 </Form.Group>
 
@@ -249,7 +246,7 @@ export default function ViewVendors() {
                 <Form.Group id="category">
                   <Form.Control
                     type="text"
-                    placeholder="business category .."
+                    placeholder="ad category .."
                     ref={categoryRef}
                     minLength="3"
                     maxLength="20"
@@ -262,16 +259,11 @@ export default function ViewVendors() {
                     ref={timelineRef}
                     onChange={() => setTimeline(timelineRef.current.value)}
                   >
-                    <option value="">Select timeline (optional..)</option>
+                    <option value="">Select timeline</option>
                     <option value="request_date">
-                      Date of Request raised by vendor
+                      Date of Ad request raised by vendor
                     </option>
-                    {/* <option value="review_date">
-                      Date of Review Commencement
-                    </option>
-                    <option value="verify_date">
-                      Date of profile verification complete
-                    </option> */}
+                    <option value="publish_date">Date of Ad published</option>
                   </Form.Control>
                 </Form.Group>
 
@@ -304,7 +296,7 @@ export default function ViewVendors() {
                   className="w-100 mt-3"
                   type="submit"
                 >
-                  Search Vendors
+                  Search Ads
                 </Button>
               </div>
               <div className="col">
@@ -323,31 +315,37 @@ export default function ViewVendors() {
           </Form>
           <hr />
 
-          <div className="">
-            <Link to="/vendors">Back</Link>
+          <div className="text-center">
+            <Link to="/ads">Back</Link>
           </div>
         </Card.Body>
       </Card>
     );
   }
 
-  function handleVendorClick(vendor) {
-    if (vendor) {
-      setSelectedVendor(vendor);
-      scrollToTop();
-    } else {
-      setSelectedVendor(null);
-    }
+  function renderMainView() {
+    return (
+      <div className="row">
+        <div className="col">{renderFilterCriteria()}</div>
+        <div className="col">
+          {selectedAd && (
+            <AdDetailView
+              currAd={selectedAd}
+              getStatusTextColor={getStatusTextColor}
+            ></AdDetailView>
+          )}
+        </div>
+      </div>
+    );
   }
-
   return (
     <div>
       {renderMainView()}
-      <VendorListView
-        vendorList={vendors}
-        onVendorClicked={handleVendorClick}
+      <AdsListView
+        adsList={ads}
+        onAdClicked={handleAdClick}
         getStatusTextColor={getStatusTextColor}
-      ></VendorListView>
+      ></AdsListView>
       <div className="row p-3">
         <div className="col">
           <Button

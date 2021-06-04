@@ -7,19 +7,6 @@ export default class VendorDetailView extends Component {
     return this.renderVendor(vendor);
   }
 
-  getStatusTextColor = (status) => {
-    switch (status) {
-      case "queued":
-        return "#3d84b8";
-      case "review":
-        return "#ffab73";
-      case "active":
-        return "#8fd9a8";
-      default:
-        return "white";
-    }
-  };
-
   renderVendor = (vendor) => {
     return (
       <div className="container">
@@ -61,7 +48,7 @@ export default class VendorDetailView extends Component {
               <td style={{ color: "#ffc93c" }}>Status</td>
               <td
                 style={{
-                  color: this.getStatusTextColor(vendor.status),
+                  color: this.props.getStatusTextColor(vendor.status),
                 }}
               >
                 {vendor.status}
@@ -69,7 +56,15 @@ export default class VendorDetailView extends Component {
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Subscription</td>
-              <td>{vendor.subscription.status}</td>
+              <td
+                style={{
+                  color: this.props.getSubscriptionStatusTextColor(
+                    vendor.subscription.status
+                  ),
+                }}
+              >
+                {vendor.subscription.status}
+              </td>
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Requested On</td>

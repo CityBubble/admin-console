@@ -9,6 +9,9 @@ export default function AdsActions() {
         <Link to="/createAd" className="btn btn-primary w-100 mt-3">
           Create Ad
         </Link>
+        <Link to="/viewAds" className="btn btn-secondary w-100 mt-3">
+          View Ad
+        </Link>
         <div className="w-100 text-center mt-3">
           <Link to="/">Dashboard</Link>
         </div>
