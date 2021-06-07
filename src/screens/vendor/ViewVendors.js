@@ -220,7 +220,7 @@ export default function ViewVendors() {
                     </option>
                     <option value="queued">Queued</option>
                     <option value="review">Under Review</option>
-                    <option value="active">Verified</option>
+                    <option value="verified">Verified</option>
                   </Form.Control>
                 </Form.Group>
 
@@ -347,6 +347,7 @@ export default function ViewVendors() {
         vendorList={vendors}
         onVendorClicked={handleVendorClick}
         getStatusTextColor={getStatusTextColor}
+        getSubscriptionStatusTextColor={getSubscriptionStatusTextColor}
       ></VendorListView>
       <div className="row p-3">
         <div className="col">

@@ -19,7 +19,6 @@ function getVendorStorageRef(cityCode, uid) {
 async function getVendors(cityCode, limit, filterObj) {
   console.log("getVendors for city - " + cityCode);
   let query = getCollectionRef(cityCode);
-
   query = constructQuery(query, filterObj);
   const snapshot = await query.limit(limit).get();
 

@@ -27,8 +27,10 @@ export default class AdsListView extends Component {
                   <th>Tagline</th>
                   <th>Area</th>
                   <th>Category</th>
+                  <th>Priority</th>
                   <th>Ad Status</th>
                   <th>Request Date</th>
+                  <th>Published On</th>
                 </tr>
               </thead>
               <tbody>
@@ -44,6 +46,7 @@ export default class AdsListView extends Component {
                       <td>{currentAd.raw.tagline}</td>
                       <td>{currentAd.vendor.address.area}</td>
                       <td>{currentAd.vendor.category.join(", ")}</td>
+                      <td>{this.props.getPriority(currentAd.priority)}</td>
                       <td
                         style={{
                           color: this.props.getStatusTextColor(
@@ -59,6 +62,14 @@ export default class AdsListView extends Component {
                           .toString()
                           .substring(3, 15)}
                       </td>
+                      {currentAd.timeline.publish_date ? (
+                        <td>
+                          {currentAd.timeline.publish_date
+                            .toDate()
+                            .toString()
+                            .substring(3, 15)}
+                        </td>
+                      ): <td>Not Published</td>}
                     </tr>
                   );
                 })}

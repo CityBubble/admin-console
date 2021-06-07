@@ -30,16 +30,41 @@ export default class VendorDetailFormView extends Component {
     this.subscriptionStatusRef = React.createRef();
   };
 
-  uploadToCloud = () => {};
-
-  render() {
-    if (this.state.vendor) {
-      return this.renderVendor(this.state.vendor);
+  async handleModifyVendorSubmit(e) {
+    console.log("handleModifyVendorSubmit");
+    e.preventDefault();
+    this.clearMessageFields();
+    this.setState({ loading: true });
+    if (this.validateVendorForm()) {
+      const modifiedVendor = this.constructModifiedVendorObj();
+      const [status, msg] = await this.props.modifyVendorCallback(
+        modifiedVendor
+      );
+      if (status) {
+        console.log("updating vendor state");
+        this.setState(
+          {
+            successMsg: msg,
+            vendor: {
+              ...modifiedVendor,
+            },
+          },
+          () => {
+            this.tempAddrObj = null;
+            this.resetForm(false);
+          }
+        );
+      } else {
+        console.log("handling error for modify vendor");
+        this.setErrorMsg(msg);
+        this.resetVendorProfile(false);
+      }
+      this.props.scrollTop();
     }
-    return "Loading Details ... ";
+    this.setState({ loading: false });
   }
 
-  resetVendorProfile = () => {
+  resetVendorProfile = (resetForm = true) => {
     if (this.tempAddrObj) {
       this.setState(
         {
@@ -51,7 +76,9 @@ export default class VendorDetailFormView extends Component {
         () => {
           // callback invoked on state update since state update is async func
           this.tempAddrObj = null;
-          this.resetForm();
+          if (resetForm) {
+            this.resetForm();
+          }
         }
       );
     } else {
@@ -61,7 +88,8 @@ export default class VendorDetailFormView extends Component {
 
   resetForm = (clearMsgs = true) => {
     this.modifyVendorFormRef.current.reset();
-    this.subscriptionStatusRef.current.value = this.state.vendor.subscription.status;
+    this.subscriptionStatusRef.current.value =
+      this.state.vendor.subscription.status;
     this.setState({
       currNewLogoImg: null,
       currPreviewNewLogoImgUrl: null,
@@ -89,38 +117,10 @@ export default class VendorDetailFormView extends Component {
     });
   };
 
-  async handleModifyVendorSubmit(e) {
-    console.log("handleModifyVendorSubmit");
-    e.preventDefault();
-    this.clearMessageFields();
-    this.setState({ loading: true });
-    if (this.validateVendorForm()) {
-      const modifiedVendor = this.constructModifiedVendorObj();
-      const [status, msg] = await this.props.modifyVendorCallback(
-        modifiedVendor
-      );
-      if (status) {
-        console.log("updating vendor state");
-        this.setState(
-          {
-            successMsg: msg,
-            vendor: {
-              ...modifiedVendor,
-            },
-          },
-          () => this.resetForm(false)
-        );
-      } else {
-        this.setErrorMsg(msg);
-      }
-      this.tempAddrObj = null;
-      this.props.scrollTop();
-    }
-    this.setState({ loading: false });
-  }
-
   constructModifiedVendorObj = () => {
-    this.tempAddrObj = Object.assign({}, this.state.vendor.address);
+    if (this.tempAddrObj === null) {
+      this.tempAddrObj = Object.assign({}, this.state.vendor.address);
+    }
     let modifiedVendor = Object.assign({}, this.state.vendor);
 
     modifiedVendor.name = this.props.formatCasing(this.nameRef.current.value);
@@ -133,7 +133,8 @@ export default class VendorDetailFormView extends Component {
     );
     modifiedVendor.address.pincode = this.pincodeRef.current.value;
     modifiedVendor.address.full_address = this.fullAddressRef.current.value;
-    modifiedVendor.subscription.status = this.subscriptionStatusRef.current.value;
+    modifiedVendor.subscription.status =
+      this.subscriptionStatusRef.current.value;
     modifiedVendor.timeline.lastModifiedOn = new Date();
 
     if (this.state.currNewLogoImg) {
@@ -425,4 +426,11 @@ export default class VendorDetailFormView extends Component {
       </Card>
     );
   };
+
+  render() {
+    if (this.state.vendor) {
+      return this.renderVendor(this.state.vendor);
+    }
+    return "Loading Details ... ";
+  }
 }

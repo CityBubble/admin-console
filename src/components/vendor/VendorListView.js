@@ -52,7 +52,15 @@ export default class VendorListView extends Component {
                       >
                         {vendor.status}
                       </td>
-                      <td>{vendor.subscription.status}</td>
+                      <td
+                        style={{
+                          color: this.props.getSubscriptionStatusTextColor(
+                            vendor.subscription.status
+                          ),
+                        }}
+                      >
+                        {vendor.subscription.status}
+                      </td>
                       <td>
                         {vendor.timeline.request_date
                           .toDate()

@@ -13,6 +13,7 @@ export default function ViewAds() {
   const statusRef = useRef();
   const categoryRef = useRef();
   const areaRef = useRef();
+  const priorityRef = useRef();
   const vendorNameRef = useRef();
   const timelineRef = useRef();
   const startDateRef = useRef();
@@ -30,7 +31,7 @@ export default function ViewAds() {
   const [hasMore, setMore] = useState(false);
 
   const { formatTextCasing, scrollToTop } = useUtility();
-  const { getStatusTextColor } = useUIUtility();
+  const { getStatusTextColor, getPriorityText } = useUIUtility();
   const { getAds } = useAdDataStore();
 
   function handleViewAds(e) {
@@ -58,6 +59,11 @@ export default function ViewAds() {
     const vendorName = vendorNameRef.current.value.trim();
     if (vendorName.length > 0) {
       filterObj["vendor"] = formatTextCasing(vendorName);
+    }
+
+    const priority = priorityRef.current.value.trim();
+    if (priority.length > 0) {
+      filterObj["priority"] = parseInt(priority);
     }
 
     const status = statusRef.current.value.trim();
@@ -222,6 +228,15 @@ export default function ViewAds() {
                   />
                 </Form.Group>
 
+                <Form.Group id="priority">
+                  <Form.Control as="select" ref={priorityRef}>
+                    <option value="">Select priority</option>
+                    <option value="1">High (Elite)</option>
+                    <option value="2">Medium (Premium)</option>
+                    <option value="3">Low (Basic)</option>
+                  </Form.Control>
+                </Form.Group>
+
                 <Form.Group id="status">
                   <Form.Control as="select" ref={statusRef}>
                     <option value="">Select status</option>
@@ -332,6 +347,7 @@ export default function ViewAds() {
             <AdDetailView
               currAd={selectedAd}
               getStatusTextColor={getStatusTextColor}
+              getPriority={getPriorityText}
             ></AdDetailView>
           )}
         </div>
@@ -345,6 +361,7 @@ export default function ViewAds() {
         adsList={ads}
         onAdClicked={handleAdClick}
         getStatusTextColor={getStatusTextColor}
+        getPriority={getPriorityText}
       ></AdsListView>
       <div className="row p-3">
         <div className="col">

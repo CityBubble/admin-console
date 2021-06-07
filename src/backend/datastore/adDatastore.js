@@ -59,6 +59,9 @@ function constructQuery(query, filterObj) {
     if (filterObj.vendor) {
       query = query.where("vendor.name", "==", filterObj.vendor);
     }
+    if (filterObj.priority) {
+      query = query.where("priority", "==", filterObj.priority);
+    }
     if (filterObj.status) {
       query = query.where("ad_status.status", "==", filterObj.status);
     }
@@ -88,7 +91,42 @@ function constructQuery(query, filterObj) {
   return query;
 }
 
+async function getAdsForModification(cityCode, vendorName) {
+  console.log(
+    "getAdsForModification for city - " +
+      cityCode +
+      " vendorName = " +
+      vendorName
+  );
+  let query = getCollectionRef(cityCode)
+    .where("vendor.name", "==", vendorName)
+    .where("ad_status.status", "in", ["active", "freeze"])
+    .orderBy("timeline.publish_date", "desc");
+
+  const snapshot = await query.limit(15).get();
+
+  let ads = [];
+  snapshot.forEach((doc) => {
+    let obj = doc.data();
+    ads.push({ uid: doc.id, ...obj });
+  });
+  console.log(ads);
+  return ads;
+}
+
+async function modifyAd(cityCode, modifiedAd) {
+  console.log("modify Ad data for city- " + cityCode);
+  if (!cityCode || !modifiedAd) {
+    throw new Error("Invalid Arguments");
+  }
+  const adDocRef = getCollectionRef(cityCode).doc(modifiedAd.uid);
+  await adDocRef.update(modifiedAd);
+  console.log("ad updated successfully");
+}
+
 const actions = {
   addNewAd,
   getAds,
+  getAdsForModification,
+  modifyAd,
 };

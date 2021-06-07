@@ -21,6 +21,7 @@ export default function CreateaAd() {
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
+  const [vendorProfiles, setVendorProfiles] = useState([]);
   const [activeVendor, setActiveVendor] = useState(null);
   const [showNewAdForm, setShowNewAdForm] = useState(false);
 
@@ -34,6 +35,7 @@ export default function CreateaAd() {
     e.preventDefault();
     clearMessageFields();
     setLoading(true);
+    setVendorProfiles([]);
     setActiveVendor(null);
     setShowNewAdForm(false);
     try {
@@ -44,7 +46,7 @@ export default function CreateaAd() {
         searchVal
       );
       console.log(vendors);
-      setActiveVendor(vendors[0]);
+      setVendorProfiles(vendors);
     } catch (error) {
       setError(error.message);
     }
@@ -113,9 +115,18 @@ export default function CreateaAd() {
       timeline: {
         request_date: today,
         expiry_date: endDate,
+        //TODO: temporary should remove it once REVIEW AD is done
+        review_date: today,
+        publish_date: today,
       },
       ad_status: {
-        status: Constants.ADS_INITIAL_VERIFY_STATUS,
+        status: "active", //Constants.ADS_INITIAL_VERIFY_STATUS,
+        //temporary should remove it once REVIEW AD is done
+        reviewed_by: {
+          uid: "uid",
+          name: "name",
+          email: "email",
+        },
       },
       vendor: {
         uid: activeVendor.uid,
@@ -123,6 +134,13 @@ export default function CreateaAd() {
         contact: activeVendor.contact,
         category: activeVendor.category,
         address: activeVendor.address,
+      },
+      priority: 1, // should be deduced from vendor's subscription plan
+      //temporary should remove it once REVIEW AD is done
+      processed: {
+        tagline: "Processed: " + taglineRef.current.value,
+        desc: "Processed: " + descRef.current.value,
+        img_url: null,
       },
     };
     return adObj;
@@ -176,35 +194,48 @@ export default function CreateaAd() {
     );
   };
 
-  const renderActiveVendor = () => {
+  const renderVendorProfiles = () => {
     return (
-      <Card style={{ width: "18rem" }}>
-        {activeVendor.logoUrl && (
-          <Card.Img variant="top" src={activeVendor.logoUrl} />
-        )}
-        <Card.Body>
-          <Card.Title>{activeVendor.name}</Card.Title>
-          <Card.Text>Area = {activeVendor.address.area}</Card.Text>
-          <Card.Text>Verification status = {activeVendor.status}</Card.Text>
-          <Card.Text>
-            Subscription status = {activeVendor.subscription.status}
-          </Card.Text>
-          {!showNewAdForm &&
-            activeVendor.subscription &&
-            activeVendor.subscription.status === "subscribed" && (
-              <Button
-                variant="primary"
-                onClick={() => {
-                  newAdFormRef.current && newAdFormRef.current.reset();
-                  clearMessageFields();
-                  setShowNewAdForm(true);
-                }}
-              >
-                Create New Ad
-              </Button>
-            )}
-        </Card.Body>
-      </Card>
+      <div className="row">
+        {vendorProfiles.map((currProfile, index) => {
+          return (
+            <Card
+              key={index}
+              style={{ width: "18rem" }}
+              className="col p-1 m-3"
+            >
+              {currProfile.logoUrl && (
+                <Card.Img variant="top" src={currProfile.logoUrl} />
+              )}
+              <Card.Body>
+                <Card.Title>{currProfile.name}</Card.Title>
+                <Card.Text>Area = {currProfile.address.area}</Card.Text>
+                <Card.Text>
+                  Verification status = {currProfile.status}
+                </Card.Text>
+                <Card.Text>
+                  Subscription status = {currProfile.subscription.status}
+                </Card.Text>
+                {!showNewAdForm &&
+                  currProfile.subscription &&
+                  currProfile.subscription.status === "subscribed" && (
+                    <Button
+                      variant="primary"
+                      onClick={() => {
+                        setActiveVendor(currProfile);
+                        newAdFormRef.current && newAdFormRef.current.reset();
+                        clearMessageFields();
+                        setShowNewAdForm(true);
+                      }}
+                    >
+                      Create New Ad
+                    </Button>
+                  )}
+              </Card.Body>
+            </Card>
+          );
+        })}
+      </div>
     );
   };
 
@@ -212,7 +243,9 @@ export default function CreateaAd() {
     return (
       <Card className="w-50">
         <Card.Body>
-          <h3 className="text-center mb-4">Create New Ad</h3>
+          <h3 className="text-center mb-4">
+            {activeVendor.name} - {activeVendor.address.area}
+          </h3>
           {error && <Alert variant="danger">{error}</Alert>}
           {message && <Alert variant="success">{message}</Alert>}
           <Form onSubmit={handleCreateAdSubmit} ref={newAdFormRef}>
@@ -277,7 +310,7 @@ export default function CreateaAd() {
     <div>
       <div className="row">
         <div className="col"> {renderGetVendorProfileForm()}</div>
-        <div className="col"> {activeVendor && renderActiveVendor()} </div>
+        <div className="col">{vendorProfiles && renderVendorProfiles()}</div>
       </div>
       <div className="col mt-3 w-70">
         {" "}

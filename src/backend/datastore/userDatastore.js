@@ -5,18 +5,21 @@ export function useUserDataStore() {
   return actions;
 }
 
+function getCollectionRef() {
+  return db.collection(Collection.COLL_INTERNAL_USERS);
+}
+
 async function generateUser(newAuthUser, additionalData) {
   console.log("generate user");
   if (!newAuthUser) {
     return;
   }
-  const userRef = db.doc(
-    `${Collection.COLL_INTERNAL_USERS}/${newAuthUser.uid}`
-  );
-  const snapshot = await userRef.get();
+  const userDocRef = getCollectionRef().doc(newAuthUser.uid);
+  const snapshot = await userDocRef.get();
 
   if (!snapshot.exists) {
-    userRef.set({
+    userDocRef.set({
+      uid: newAuthUser.uid,
       contact: additionalData.contact,
       role: additionalData.role,
       email: newAuthUser.email,
@@ -35,15 +38,14 @@ async function getAuthUserData(authUser) {
     throw new Error("Auth User invalid");
   }
   console.log(authUser.uid);
-  const userRef = db.doc(`${Collection.COLL_INTERNAL_USERS}/${authUser.uid}`);
-  const snapshot = await userRef.get();
+  const userDocRef = getCollectionRef().doc(authUser.uid);
+  const snapshot = await userDocRef.get();
 
   if (!snapshot.exists) {
     throw new Error("User record not found in datastore");
   }
-  let userDoc = snapshot.data();
-  console.log("USER DOC = " + JSON.stringify(userDoc));
-  return userDoc;
+  console.log("USER DOC = " + JSON.stringify(snapshot.data()));
+  return snapshot.data();
 }
 
 async function getUserDataByEmail(email) {
@@ -51,54 +53,38 @@ async function getUserDataByEmail(email) {
   if (!email) {
     throw new Error("invalid email");
   }
-  const snapshot = await db
-    .collection(Collection.COLL_INTERNAL_USERS)
+  const snapshot = await getCollectionRef()
     .where("email", "==", email)
+    .limit(1)
     .get();
-
   if (snapshot.empty) {
     throw new Error("No user registered with email: " + email);
   }
   let user = null;
   snapshot.forEach((doc) => {
-    let local = doc.data();
-    user = { uid: doc.id, ...local };
+    user = doc.data();
     return;
   });
-
   return user;
 }
 
 async function getAllUsers() {
   console.log("getAllUsers");
-  const snapshot = await db
-    .collection(Collection.COLL_INTERNAL_USERS)
-    .orderBy("username", "desc")
-    .limit(2)
+  const snapshot = await getCollectionRef()
+    .orderBy("username", "asc")
+    .limit(5)
     .get();
 
   let users = [];
   snapshot.forEach((doc) => {
-    let obj = doc.data();
-    console.log("USER DOC LOCAL= " + JSON.stringify(obj));
-    users.push({
-      uid: doc.id,
-      email: obj.email,
-      name: obj.username,
-    });
+    users.push(doc.data());
   });
-  console.log(users.length);
-  console.log(users);
   return users;
 }
 
 async function modifyUserData(modifiedUser) {
   console.log("modifyUserData");
-  console.log(JSON.stringify(modifiedUser));
-  const userDocRef = db
-    .collection(Collection.COLL_INTERNAL_USERS)
-    .doc(modifiedUser.uid);
-
+  const userDocRef = getCollectionRef().doc(modifiedUser.uid);
   await userDocRef.update(modifiedUser);
   console.log("updated successfully");
 }
@@ -106,8 +92,7 @@ async function modifyUserData(modifiedUser) {
 async function deleteUserData(uid) {
   console.log("deleteUserData");
   console.log("uid: " + uid);
-  const userDocRef = db.collection(Collection.COLL_INTERNAL_USERS).doc(uid);
-
+  const userDocRef = getCollectionRef().doc(uid);
   await userDocRef.delete();
   console.log("deleted successfully");
 }

@@ -4,10 +4,10 @@ import { Table } from "react-bootstrap";
 export default class AdDetailView extends Component {
   render() {
     const currentAd = this.props.currAd;
-    return this.renderVendor(currentAd);
+    return this.renderAd(currentAd);
   }
 
-  renderVendor = (currentAd) => {
+  renderAd = (currentAd) => {
     return (
       <div className="container">
         <Table responsive="lg" striped bordered hover variant="dark" size="lg">
@@ -19,6 +19,10 @@ export default class AdDetailView extends Component {
             <tr>
               <td style={{ color: "#ffc93c" }}>Vendor</td>
               <td>{currentAd.vendor.name}</td>
+            </tr>
+            <tr>
+              <td style={{ color: "#ffc93c" }}>Priority</td>
+              <td>{this.props.getPriority(currentAd.priority)}</td>
             </tr>
             <tr>
               <td style={{ color: "#ffc93c" }}>Category</td>

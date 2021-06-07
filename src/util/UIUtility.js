@@ -35,7 +35,21 @@ function getSubscriptionStatusTextColor(status) {
   }
 }
 
+function getPriorityText(priority) {
+  switch (priority) {
+    case 1:
+      return "High (Elite)";
+    case 2:
+      return "Medium (Premium)";
+    case 3:
+      return "Low (Basic)";
+    default:
+      return "Unknown";
+  }
+}
+
 const actions = {
   getStatusTextColor,
   getSubscriptionStatusTextColor,
+  getPriorityText,
 };

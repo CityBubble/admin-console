@@ -12,7 +12,7 @@ export default function ModifyVendor() {
   const contactRef = useRef();
   const nameRef = useRef();
 
-  const [searchByContact, setSearchByContact] = useState(true);
+  const [searchByContact, setSearchByContact] = useState(false);
   const [error, setError] = useState("");
   const [message, setMessage] = useState("");
   const [loading, setLoading] = useState(false);
@@ -87,6 +87,7 @@ export default function ModifyVendor() {
     }
 
     try {
+      // TODO: remove comments
       // await deleteVendorData(cityRef.current.value, uid);
       removeVendorFromProfileList(uid);
       alert("Vendor deleted successfully");
@@ -137,13 +138,12 @@ export default function ModifyVendor() {
                   setSearchByContact(
                     searchFieldRef.current.value === "contact"
                   );
-                  // TODO: remove later
-                  nameRef.current.value = nameRef.current.defaultValue;
-                  contactRef.current.value = contactRef.current.defaultValue;
+                  nameRef.current.value = "";
+                  contactRef.current.value = "";
                 }}
               >
-                <option value="contact">Contact</option>
                 <option value="name">Name</option>
+                <option value="contact">Contact</option>
               </Form.Control>
             </Form.Group>
 
@@ -160,7 +160,6 @@ export default function ModifyVendor() {
                 minLength="10"
                 maxLength="10"
                 placeholder="10-digit mobile number"
-                defaultValue=""
               />
             </Form.Group>
 
@@ -176,7 +175,6 @@ export default function ModifyVendor() {
                 ref={nameRef}
                 minLength="3"
                 maxLength="40"
-                defaultValue=""
                 placeholder="Business Name .. keep it exact"
               />
             </Form.Group>
