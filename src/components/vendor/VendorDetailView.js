@@ -48,10 +48,10 @@ export default class VendorDetailView extends Component {
               <td style={{ color: "#ffc93c" }}>Status</td>
               <td
                 style={{
-                  color: this.props.getStatusTextColor(vendor.status),
+                  color: this.props.getStatusTextColor(vendor.profile_status),
                 }}
               >
-                {vendor.status}
+                {vendor.profile_status}
               </td>
             </tr>
             <tr>

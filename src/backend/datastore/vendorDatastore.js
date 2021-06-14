@@ -1,5 +1,6 @@
-import { db, storage } from "../firebase";
+import Constants from "../../util/Constants";
 import Collection from "../collectionConstants";
+import { db, storage } from "../firebase";
 
 export function useVendorDataStore() {
   return actions;
@@ -36,8 +37,8 @@ async function getVendors(cityCode, limit, filterObj) {
 
 function constructQuery(query, filterObj) {
   if (filterObj) {
-    if (filterObj.status) {
-      query = query.where("status", "==", filterObj.status);
+    if (filterObj.profile_status) {
+      query = query.where("profile_status", "==", filterObj.profile_status);
     }
     if (filterObj.subscription_status) {
       query = query.where(
@@ -68,19 +69,30 @@ function constructQuery(query, filterObj) {
   return query;
 }
 
-async function getVendorBySearchField(cityCode, searchField, searchVal) {
+async function getVendorBySearchField(
+  cityCode,
+  searchField,
+  searchVal,
+  onlyVerifiedProfiles = true
+) {
   console.log("getVendorBySearchField for city - " + cityCode);
   if (!cityCode || !searchField || !searchVal) {
     throw new Error("Invalid Arguments");
   }
   console.log("filed = " + searchField);
   console.log("val = " + searchVal);
-  const vendorCollRef = getCollectionRef(cityCode);
-
-  const snapshot = await vendorCollRef
+  let query = getCollectionRef(cityCode)
     .where(searchField, "==", searchVal)
-    .orderBy("timeline.request_date", "asc")
-    .get();
+    .orderBy("timeline.request_date", "asc");
+  if (onlyVerifiedProfiles) {
+    query = query.where(
+      "profile_status",
+      "==",
+      Constants.VENDOR_PROFILE_VERIFY_STATUS
+    );
+  }
+  const snapshot = await query.get();
+
   if (snapshot.empty) {
     /*change in this error msg should be reconciled with CreateVendorProfile.js
     for it checks for the string matching.*/

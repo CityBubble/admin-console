@@ -47,10 +47,12 @@ export default class VendorListView extends Component {
                       <td>{vendor.category.join(", ")}</td>
                       <td
                         style={{
-                          color: this.props.getStatusTextColor(vendor.status),
+                          color: this.props.getStatusTextColor(
+                            vendor.profile_status
+                          ),
                         }}
                       >
-                        {vendor.status}
+                        {vendor.profile_status}
                       </td>
                       <td
                         style={{

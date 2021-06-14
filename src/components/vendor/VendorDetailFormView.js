@@ -336,7 +336,11 @@ export default class VendorDetailFormView extends Component {
             </Form.Group>
             <Form.Group id="verify_status">
               <Form.Label>Verification Status</Form.Label>
-              <Form.Control type="text" readOnly defaultValue={vendor.status} />
+              <Form.Control
+                type="text"
+                readOnly
+                defaultValue={vendor.profile_status}
+              />
             </Form.Group>
             <Form.Group id="subscription_status">
               <Form.Label>Subscription</Form.Label>

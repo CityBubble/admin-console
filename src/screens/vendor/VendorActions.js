@@ -10,7 +10,7 @@ export default function VendorActions() {
           Create Vendor Profile
         </Link>
         <Link to="/modifyVendor" className="btn btn-info w-100 mt-3">
-          Modify Vendor Profile
+          Modify Verified Vendor Profile
         </Link>
         <Link to="/viewVendors" className="btn btn-secondary w-100 mt-3">
           View Vendor Profiles

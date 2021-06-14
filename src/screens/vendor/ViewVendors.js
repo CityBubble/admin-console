@@ -10,7 +10,7 @@ import { useUIUtility } from "../../util/UIUtility";
 export default function ViewVendors() {
   const searchFormRef = useRef();
   const cityRef = useRef();
-  const statusRef = useRef();
+  const profileStatusRef = useRef();
   const subscriptionStatusRef = useRef();
   const categoryRef = useRef();
   const areaRef = useRef();
@@ -35,9 +35,9 @@ export default function ViewVendors() {
 
   function constructFilterCriteria() {
     let filterObj = {};
-    const status = statusRef.current.value.trim();
-    if (status.length > 0) {
-      filterObj["status"] = status;
+    const profile_status = profileStatusRef.current.value.trim();
+    if (profile_status.length > 0) {
+      filterObj["profile_status"] = profile_status;
     }
     const subscriptionStatus = subscriptionStatusRef.current.value.trim();
     if (subscriptionStatus.length > 0) {
@@ -97,7 +97,6 @@ export default function ViewVendors() {
   }
 
   async function onMorePress() {
-    console.log("MORE");
     let filterObj = searchFilter;
     if (lastDoc) {
       filterObj["lastDoc"] = lastDoc;
@@ -214,7 +213,7 @@ export default function ViewVendors() {
             {cityCode && cityCode !== "null" && (
               <div>
                 <Form.Group id="status">
-                  <Form.Control as="select" ref={statusRef}>
+                  <Form.Control as="select" ref={profileStatusRef}>
                     <option value="">
                       Select verification status (optional..)
                     </option>
@@ -266,9 +265,7 @@ export default function ViewVendors() {
                     <option value="request_date">
                       Date of Request raised by vendor
                     </option>
-                    {/* <option value="review_date">
-                      Date of Review Commencement
-                    </option>
+                    {/* 
                     <option value="verify_date">
                       Date of profile verification complete
                     </option> */}

@@ -97,6 +97,32 @@ async function deleteUserData(uid) {
   console.log("deleted successfully");
 }
 
+//TODO : remove later
+async function tempFunc() {
+  console.log("tempFUNC");
+  const coll = db
+    .collection(Collection.COLL_CITIES)
+    .doc("asr")
+    .collection(Collection.SUB_COLL_VENDORS);
+
+  const snapshot = await coll.get();
+
+  snapshot.forEach((doc) => {
+    let vendor = doc.data();
+    console.log("vendor ->" + vendor.name);
+    if (vendor.status) {
+      vendor.profile_status = vendor.status;
+      delete vendor.status;
+      console.log(JSON.stringify(vendor));
+      const vdoc = coll.doc(vendor.uid);
+
+      console.log(
+        "updated -> " + vendor.name + " status = " + vendor.profile_status
+      );
+    }
+  });
+}
+
 const actions = {
   generateUser,
   getAuthUserData,

@@ -57,8 +57,8 @@ export default function CreateaAd() {
     console.log("handleCreateAdSubmit");
     e.preventDefault();
     setLoading(true);
-    const adObj = constructNewAdObject();
-    if (adObj !== null) {
+    if (validateAdForm()) {
+      const adObj = constructNewAdObject();
       try {
         await addNewAd(adObj);
         setMessage("Ad created Successfully");
@@ -77,36 +77,42 @@ export default function CreateaAd() {
     setMessage("");
   }
 
-  function constructNewAdObject() {
+  function validateAdForm() {
     clearMessageFields();
 
     //validate tagline
     taglineRef.current.value = taglineRef.current.value.trim();
     if (taglineRef.current.value.length < Constants.NAME_MIN_LENGTH) {
       setError("tagline must be atleast 3 characters long");
-      return null;
+      return false;
     }
 
     //validate description
     descRef.current.value = descRef.current.value.trim();
     if (descRef.current.value.length < Constants.NAME_MIN_LENGTH) {
       setError("ad description must be atleast 3 characters long");
-      return null;
+      return false;
     }
 
     //validate expiry date
     if (endDateRef.current.value.length === 0) {
       setError("Please select expiry date");
-      return null;
+      return false;
     }
 
     let today = new Date();
     let endDate = new Date(endDateRef.current.value);
     if (endDate.getTime() < today.getTime()) {
       setError("Expiry date cannot be before today");
-      return null;
+      return false;
     }
 
+    return true;
+  }
+
+  function constructNewAdObject() {
+    let today = new Date();
+    let endDate = new Date(endDateRef.current.value);
     const adObj = {
       raw: {
         tagline: taglineRef.current.value,
@@ -120,7 +126,7 @@ export default function CreateaAd() {
         publish_date: today,
       },
       ad_status: {
-        status: "active", //Constants.ADS_INITIAL_VERIFY_STATUS,
+        status: Constants.ADS_ACTIVE_STATUS, //Constants.ADS_INITIAL_VERIFY_STATUS,
         //temporary should remove it once REVIEW AD is done
         reviewed_by: {
           uid: "uid",

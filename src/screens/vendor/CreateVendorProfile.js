@@ -137,7 +137,8 @@ export default function CreateVendorProfile() {
       const profilesList = await getVendorBySearchField(
         cityCode,
         "contact",
-        mobile
+        mobile,
+        false
       );
       if (profilesList && profilesList.length > 0) {
         return [true, profilesList[0].name];
@@ -172,7 +173,7 @@ export default function CreateVendorProfile() {
       subscription: {
         status: Constants.VENDOR_PROFILE_INITIAL_SUBSCRIPTIONS_STATUS,
       },
-      status: Constants.VENDOR_PROFILE_INITIAL_VERIFY_STATUS,
+      profile_status: Constants.VENDOR_PROFILE_INITIAL_VERIFY_STATUS,
       timeline: {
         request_date: new Date(),
       },
