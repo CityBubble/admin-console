@@ -16,6 +16,8 @@ import AdsActions from "./screens/ads/AdsActions";
 import CreateAd from "./screens/ads/CreateAd";
 import ViewAds from "./screens/ads/ViewAds";
 import ModifyAd from "./screens/ads/ModifyAd";
+import ReviewActions from "./screens/review/ReviewActions";
+import ReviewVendorProfile from "./screens/review/ReviewVendorProfile";
 
 function App() {
   return (
@@ -47,6 +49,12 @@ function App() {
               <SecureRoute path="/createAd" component={CreateAd} />
               <SecureRoute path="/viewAds" component={ViewAds} />
               <SecureRoute path="/modifyAd" component={ModifyAd} />
+
+              <SecureRoute path="/review" component={ReviewActions} />
+              <SecureRoute
+                path="/reviewVendor"
+                component={ReviewVendorProfile}
+              />
             </Switch>
           </AuthProvider>
         </Router>

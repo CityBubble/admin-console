@@ -2,16 +2,15 @@ import React, { Component } from "react";
 import { Form, Button, Card, Alert, Image } from "react-bootstrap";
 import Constants from "../../util/Constants";
 
-export default class VendorDetailFormView extends Component {
+export default class VendorReviewFormView extends Component {
   tempAddrObj = null;
 
   constructor(props) {
     super(props);
     this.setFormRefs();
-    this.handleModifyVendorSubmit = this.handleModifyVendorSubmit.bind(this);
+    this.handleApproveVendorSubmit = this.handleApproveVendorSubmit.bind(this);
     this.state = {
       errorMsg: "",
-      successMsg: "",
       loading: false,
       vendor: this.props.currVendor,
       currNewLogoImg: null,
@@ -20,51 +19,131 @@ export default class VendorDetailFormView extends Component {
   }
 
   setFormRefs = () => {
-    this.modifyVendorFormRef = React.createRef();
+    this.verifyVendorFormRef = React.createRef();
     this.nameRef = React.createRef();
     this.contactRef = React.createRef();
     this.categoryRef = React.createRef();
+    this.labelsRef = React.createRef();
     this.areaRef = React.createRef();
     this.pincodeRef = React.createRef();
     this.fullAddressRef = React.createRef();
-    this.subscriptionStatusRef = React.createRef();
   };
 
-  async handleModifyVendorSubmit(e) {
-    console.log("handleModifyVendorSubmit");
+  async handleApproveVendorSubmit(e) {
+    console.log("handleVerifyVendorSubmit");
     e.preventDefault();
-    this.clearMessageFields();
-    this.setState({ loading: true });
+    this.setState({ loading: true, errorMsg: "" });
     if (this.validateVendorForm()) {
-      const modifiedVendor = this.constructModifiedVendorObj();
-      const [status, msg] = await this.props.modifyVendorCallback(
-        modifiedVendor
+      const approvedVendor = this.constructApprovedVendorObj();
+      const [status, msg] = await this.props.approveVendorProfileCallback(
+        approvedVendor
       );
+      console.log("status = " + status + "  msg= " + msg);
       if (status) {
-        console.log("updating vendor state");
-        this.setState(
-          {
-            successMsg: msg,
-            vendor: {
-              ...modifiedVendor,
-            },
-          },
-          () => {
-            this.tempAddrObj = null;
-            this.resetForm(false);
-          }
-        );
+        this.tempAddrObj = null;
       } else {
         console.log("handling error for modify vendor");
         this.setErrorMsg(msg);
-        this.resetVendorProfile(false);
       }
       this.props.scrollTop();
     }
     this.setState({ loading: false });
   }
 
-  resetVendorProfile = (resetForm = true) => {
+  validateVendorForm = () => {
+    console.log("validate vendor form");
+    this.setState({
+      errorMsg: "",
+    });
+
+    //validate vendor name
+    this.nameRef.current.value = this.nameRef.current.value.trim();
+    if (this.nameRef.current.value.length < Constants.NAME_MIN_LENGTH) {
+      this.setErrorMsg("name must be atleast 3 characters long");
+      return false;
+    }
+
+    //validate contact
+    this.contactRef.current.value = this.contactRef.current.value.trim();
+    if (this.contactRef.current.value.length < Constants.CONTACT_LENGTH) {
+      this.setErrorMsg("contact must be 10 digits long");
+      return false;
+    }
+    if (!this.props.isPureNumber(this.contactRef.current.value)) {
+      this.setErrorMsg("contact must only have digits");
+      return false;
+    }
+
+    //validate category
+    this.categoryRef.current.value = this.categoryRef.current.value.trim();
+    if (this.categoryRef.current.value.length < Constants.NAME_MIN_LENGTH) {
+      this.setErrorMsg("category must be atleast 3 characters long");
+      return false;
+    }
+
+    //validate labels
+    this.labelsRef.current.value = this.labelsRef.current.value.trim();
+    if (this.labelsRef.current.value.length < Constants.NAME_MIN_LENGTH) {
+      this.setErrorMsg("ensure valid labels as per the profile category");
+      return false;
+    }
+
+    //validate fullAddress
+    this.fullAddressRef.current.value =
+      this.fullAddressRef.current.value.trim();
+    if (this.fullAddressRef.current.value.length < Constants.NAME_MIN_LENGTH) {
+      this.setErrorMsg("address must be atleast 3 characters long");
+      return false;
+    }
+
+    //validate area
+    this.areaRef.current.value = this.areaRef.current.value.trim();
+    if (this.areaRef.current.value.length < Constants.NAME_MIN_LENGTH) {
+      this.setErrorMsg("area must be atleast 3 characters long");
+      return false;
+    }
+
+    //validate pincode
+    this.pincodeRef.current.value = this.pincodeRef.current.value.trim();
+    if (this.pincodeRef.current.value.length < Constants.PINCODE_LENGTH) {
+      this.setErrorMsg("pincode must be 6 digits long");
+      return false;
+    }
+    if (!this.props.isPureNumber(this.pincodeRef.current.value)) {
+      this.setErrorMsg("pincode must only have digits");
+      return false;
+    }
+
+    return true;
+  };
+
+  constructApprovedVendorObj = () => {
+    if (this.tempAddrObj === null) {
+      this.tempAddrObj = Object.assign({}, this.state.vendor.address);
+    }
+    let approvedVendor = Object.assign({}, this.state.vendor);
+
+    approvedVendor.name = this.props.formatCasing(this.nameRef.current.value);
+    approvedVendor.contact = this.contactRef.current.value;
+    approvedVendor.category = this.props.formatMultiValueCasing(
+      this.categoryRef.current.value
+    );
+    approvedVendor.labels = this.props.formatMultiValueCasing(
+      this.labelsRef.current.value
+    );
+    approvedVendor.address.area = this.props.formatCasing(
+      this.areaRef.current.value
+    );
+    approvedVendor.address.pincode = this.pincodeRef.current.value;
+    approvedVendor.address.full_address = this.fullAddressRef.current.value;
+
+    if (this.state.currNewLogoImg) {
+      approvedVendor.newProfileImg = this.state.currNewLogoImg;
+    }
+    return approvedVendor;
+  };
+
+  resetVendorProfile = () => {
     if (this.tempAddrObj) {
       this.setState(
         {
@@ -75,10 +154,9 @@ export default class VendorDetailFormView extends Component {
         },
         () => {
           // callback invoked on state update since state update is async func
+          console.log("called callback for state 11");
           this.tempAddrObj = null;
-          if (resetForm) {
-            this.resetForm();
-          }
+          this.resetForm();
         }
       );
     } else {
@@ -86,26 +164,15 @@ export default class VendorDetailFormView extends Component {
     }
   };
 
-  resetForm = (clearMsgs = true) => {
-    this.modifyVendorFormRef.current.reset();
-    this.subscriptionStatusRef.current.value =
-      this.state.vendor.subscription.status;
+  resetForm = () => {
+    console.log("called reset form 22 11");
+    this.verifyVendorFormRef.current.reset();
     this.setState({
       currNewLogoImg: null,
       currPreviewNewLogoImgUrl: null,
-    });
-
-    if (clearMsgs) {
-      this.clearMessageFields();
-    }
-    this.props.scrollTop();
-  };
-
-  clearMessageFields = () => {
-    this.setState({
       errorMsg: "",
-      successMsg: "",
     });
+    this.props.scrollTop();
   };
 
   selectNewLogoImgFile = (e) => {
@@ -117,136 +184,11 @@ export default class VendorDetailFormView extends Component {
     });
   };
 
-  constructModifiedVendorObj = () => {
-    if (this.tempAddrObj === null) {
-      this.tempAddrObj = Object.assign({}, this.state.vendor.address);
-    }
-    let modifiedVendor = Object.assign({}, this.state.vendor);
-
-    modifiedVendor.name = this.props.formatCasing(this.nameRef.current.value);
-    modifiedVendor.contact = this.contactRef.current.value;
-    modifiedVendor.category = this.props.formatCategoryCasing(
-      this.categoryRef.current.value
-    );
-    modifiedVendor.address.area = this.props.formatCasing(
-      this.areaRef.current.value
-    );
-    modifiedVendor.address.pincode = this.pincodeRef.current.value;
-    modifiedVendor.address.full_address = this.fullAddressRef.current.value;
-    modifiedVendor.subscription.status =
-      this.subscriptionStatusRef.current.value;
-    modifiedVendor.timeline.lastModifiedOn = new Date();
-
-    if (this.state.currNewLogoImg) {
-      modifiedVendor.newProfileImg = this.state.currNewLogoImg;
-    }
-
-    return modifiedVendor;
-  };
-
   setErrorMsg = (msg) => {
     this.setState({
       errorMsg: msg,
     });
     this.props.scrollTop();
-  };
-
-  validateVendorForm = () => {
-    this.clearMessageFields();
-    let isDataModified = false;
-
-    //validate vendor name
-    this.nameRef.current.value = this.nameRef.current.value.trim();
-    if (this.state.vendor.name !== this.nameRef.current.value) {
-      isDataModified = true;
-      if (this.nameRef.current.value.length < Constants.NAME_MIN_LENGTH) {
-        this.setErrorMsg("name must be atleast 3 characters long");
-        return false;
-      }
-    }
-
-    //validate contact
-    this.contactRef.current.value = this.contactRef.current.value.trim();
-    if (this.state.vendor.contact !== this.contactRef.current.value) {
-      isDataModified = true;
-      if (this.contactRef.current.value.length < Constants.CONTACT_LENGTH) {
-        this.setErrorMsg("contact must be 10 digits long");
-        return false;
-      }
-      if (!this.props.isPureNumber(this.contactRef.current.value)) {
-        this.setErrorMsg("contact must only have digits");
-        return false;
-      }
-    }
-    //validate category
-    this.categoryRef.current.value = this.categoryRef.current.value.trim();
-    if (
-      this.state.vendor.category.join(", ") !== this.categoryRef.current.value
-    ) {
-      isDataModified = true;
-      if (this.categoryRef.current.value.length < Constants.NAME_MIN_LENGTH) {
-        this.setErrorMsg("category must be atleast 3 characters long");
-        return false;
-      }
-    }
-    //validate fullAddress
-    this.fullAddressRef.current.value =
-      this.fullAddressRef.current.value.trim();
-    if (
-      this.state.vendor.address.full_address !==
-      this.fullAddressRef.current.value
-    ) {
-      isDataModified = true;
-      if (
-        this.fullAddressRef.current.value.length < Constants.NAME_MIN_LENGTH
-      ) {
-        this.setErrorMsg("address must be atleast 3 characters long");
-        return false;
-      }
-    }
-    //validate area
-    this.areaRef.current.value = this.areaRef.current.value.trim();
-    if (this.state.vendor.address.area !== this.areaRef.current.value) {
-      isDataModified = true;
-      if (this.areaRef.current.value.length < Constants.NAME_MIN_LENGTH) {
-        this.setErrorMsg("area must be atleast 3 characters long");
-        return false;
-      }
-    }
-    //validate pincode
-    this.pincodeRef.current.value = this.pincodeRef.current.value.trim();
-    if (this.state.vendor.address.pincode !== this.pincodeRef.current.value) {
-      isDataModified = true;
-      if (this.pincodeRef.current.value.length < Constants.PINCODE_LENGTH) {
-        this.setErrorMsg("pincode must be 6 digits long");
-        return false;
-      }
-
-      if (!this.props.isPureNumber(this.pincodeRef.current.value)) {
-        this.setErrorMsg("pincode must only have digits");
-        return false;
-      }
-    }
-
-    //validate subscription status
-    if (
-      this.state.vendor.subscription.status !==
-      this.subscriptionStatusRef.current.value
-    ) {
-      isDataModified = true;
-    }
-
-    //validate new Profile image url
-    if (this.state.currNewLogoImg && this.state.currPreviewNewLogoImgUrl) {
-      isDataModified = true;
-    }
-
-    if (isDataModified) {
-      return true;
-    } else {
-      this.setErrorMsg("No Change detected");
-      return false;
-    }
   };
 
   renderVendor = (vendor) => {
@@ -257,12 +199,10 @@ export default class VendorDetailFormView extends Component {
           {this.state.errorMsg && (
             <Alert variant="danger">{this.state.errorMsg}</Alert>
           )}
-          {this.state.successMsg && (
-            <Alert variant="success">{this.state.successMsg}</Alert>
-          )}
+
           <Form
-            onSubmit={this.handleModifyVendorSubmit}
-            ref={this.modifyVendorFormRef}
+            onSubmit={this.handleApproveVendorSubmit}
+            ref={this.verifyVendorFormRef}
           >
             <Form.Group id="uid">
               <Form.Label>Vendor Id</Form.Label>
@@ -298,6 +238,16 @@ export default class VendorDetailFormView extends Component {
                 maxLength="40"
                 required
                 defaultValue={vendor.category.join(", ")}
+              />
+            </Form.Group>
+            <Form.Group id="labels">
+              <Form.Label>Labels</Form.Label>
+              <Form.Control
+                type="text"
+                ref={this.labelsRef}
+                minLength="3"
+                maxLength="40"
+                required
               />
             </Form.Group>
             <Form.Group id="area">
@@ -342,25 +292,10 @@ export default class VendorDetailFormView extends Component {
                 defaultValue={vendor.profile_status}
               />
             </Form.Group>
-            <Form.Group id="subscription_status">
-              <Form.Label>Subscription</Form.Label>
-              <Form.Control
-                as="select"
-                ref={this.subscriptionStatusRef}
-                required
-                defaultValue={vendor.subscription.status}
-              >
-                <option value="verification">Under Verification</option>
-                <option value="subscribed">Subscribed</option>
-                <option value="unsubscribed">Un-Subscribed</option>
-                <option value="freeze">Freeze</option>
-              </Form.Control>
-            </Form.Group>
             <div className="row">
               {vendor.logoUrl && (
                 <div className="col">
                   <h5>Profile Logo</h5>
-
                   <Image
                     src={vendor.logoUrl}
                     rounded
@@ -404,26 +339,24 @@ export default class VendorDetailFormView extends Component {
 
             <Button
               disabled={this.state.loading}
-              className="w-100 btn btn-warning text-white mt-3"
+              className="w-100 btn btn-success mt-3"
               type="submit"
             >
-              Modify
+              Approve
             </Button>
-            <Button
-              disabled={this.state.loading}
-              className="w-100 btn btn-danger mt-3"
-              onClick={() =>
-                this.props.deleteProfileCallback(vendor.uid, vendor.name)
-              }
-            >
-              Delete
-            </Button>
+
             <Button
               disabled={this.state.loading}
               className="w-100 btn btn-primary mt-3"
               onClick={this.resetVendorProfile}
             >
               Reset
+            </Button>
+            <Button
+              disabled={this.state.loading}
+              className="w-100 btn btn-danger mt-3"
+            >
+              Review Later
             </Button>
           </Form>
         </Card.Body>

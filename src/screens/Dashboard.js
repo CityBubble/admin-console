@@ -39,6 +39,9 @@ export default function Dashboard() {
         <Link to="/ads" className="btn btn-info w-100 mt-3">
           Ads Actions
         </Link>
+        <Link to="/review" className="btn btn-secondary w-100 mt-3">
+          Review Actions
+        </Link>
         <hr />
         <Button className="w-100 btn-danger" onClick={handleLogOut}>
           Log Out

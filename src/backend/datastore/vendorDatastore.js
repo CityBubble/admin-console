@@ -27,6 +27,7 @@ async function getVendors(cityCode, limit, filterObj) {
   let lastDoc = {};
   snapshot.forEach((doc) => {
     let obj = doc.data();
+    //TODO: remove this uid: custom field since vendor field should include this
     vendors.push({ uid: doc.id, ...obj });
     lastDoc = doc;
   });
@@ -158,6 +159,7 @@ async function addNewVendorProfile(vendorObj) {
   }
   const vendorCollRef = getCollectionRef(vendorObj.address.city.code);
   const vendorDocRef = vendorCollRef.doc();
+  vendorObj['uid'] = vendorDocRef.id;
   console.log("ref id => " + vendorDocRef.id);
   if (vendorObj.logoUrl) {
     const fileUrl = await uploadVendorLogo(
