@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
-import { Form, Button, Card, Alert, Image } from "react-bootstrap";
+import React, { useRef, useState } from "react";
+import { Form, Button, Card, Alert } from "react-bootstrap";
 import { Link } from "react-router-dom";
 import { useVendorService } from "../../backend/restService/vendorServiceProxy";
 import VendorReviewFormView from "../../components/review/VendorReviewFormView";
@@ -14,7 +14,11 @@ export default function ReviewVendorProfile() {
   const [loading, setLoading] = useState(false);
   const [vendorProfile, setVendorProfile] = useState(null);
 
-  const { getVendorProfileForReview, approveProfile } = useVendorService();
+  const {
+    getVendorProfileForReview,
+    approveProfile,
+    skipReviewForCurrentVendor,
+  } = useVendorService();
   const { loggedInUser } = useAuth();
 
   const {
@@ -31,20 +35,23 @@ export default function ReviewVendorProfile() {
   }
 
   async function handleGetReviewVendorProfileDataSubmit(e) {
-    console.log("handleCreateVendorSubmit");
+    console.log("handleGetReviewVendorProfileDataSubmit");
     e.preventDefault();
     setLoading(true);
     clearMessageFields();
     setVendorProfile(null);
-    const vendorObj = await getVendorProfileForReview(
-      cityRef.current.value,
-      loggedInUser
-    );
-    console.log("HERE=>" + JSON.stringify(vendorObj));
-    if (vendorObj) {
-      setVendorProfile(vendorObj);
-    } else {
-      setError("No Vendor profile found");
+    try {
+      const vendorObj = await getVendorProfileForReview(
+        cityRef.current.value,
+        loggedInUser
+      );
+      if (vendorObj) {
+        setVendorProfile(vendorObj);
+      } else {
+        setError("No Profile to Review");
+      }
+    } catch (error) {
+      setError(error.message);
     }
     setLoading(false);
   }
@@ -53,7 +60,6 @@ export default function ReviewVendorProfile() {
     return (
       <Card className="w-50 bg-dark text-white m-3">
         <Card.Body>
-          <h3 className="text-center mb-4">Fetch Vendor Profile</h3>
           {error && <Alert variant="danger">{error}</Alert>}
           <Form onSubmit={handleGetReviewVendorProfileDataSubmit}>
             <Form.Group id="city">
@@ -66,7 +72,7 @@ export default function ReviewVendorProfile() {
             </Form.Group>
 
             <Button
-              disabled={loading}
+              disabled={loading || vendorProfile}
               className="w-100 mt-3"
               type="submit"
               variant="success"
@@ -74,9 +80,11 @@ export default function ReviewVendorProfile() {
               Get Queued Profile
             </Button>
           </Form>
-          <div className="w-100 text-center mt-3">
-            <Link to="/review">Back</Link>
-          </div>
+          {!vendorProfile && (
+            <div className="w-100 text-center mt-3">
+              <Link to="/review">Back</Link>
+            </div>
+          )}
         </Card.Body>
       </Card>
     );
@@ -85,14 +93,22 @@ export default function ReviewVendorProfile() {
   async function approveVendorProfile(profile) {
     console.log("approveVendorProfile");
     if (profile) {
-      profile.reviewed_by = {
-        uid: loggedInUser.uid,
-        name: loggedInUser.username,
-        email: loggedInUser.email,
-      };
-
       try {
         await approveProfile(profile);
+        setVendorProfile(null);
+        return [true, "OK"];
+      } catch (error) {
+        console.log("ERROR -> " + error.message);
+        return [false, error.message];
+      }
+    }
+  }
+
+  async function skipCurrentVendorProfile(profile) {
+    console.log("skipCurrentVendorProfile -> ");
+    if (profile) {
+      try {
+        await skipReviewForCurrentVendor(profile);
         setVendorProfile(null);
         return [true, "OK"];
       } catch (error) {
@@ -114,10 +130,12 @@ export default function ReviewVendorProfile() {
         <VendorReviewFormView
           currVendor={vendorProfile}
           approveVendorProfileCallback={approveVendorProfile}
+          skipCurrentProfileCallback={skipCurrentVendorProfile}
           formatCasing={formatTextCasing}
           formatMultiValueCasing={formatCaseForCommaSeparatedItems}
           isPureNumber={isPureNumber}
           scrollTop={scrollToTop}
+          userConsent={showConfirmDialog}
         ></VendorReviewFormView>
       )}
     </div>

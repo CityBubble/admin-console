@@ -191,9 +191,24 @@ export default class VendorReviewFormView extends Component {
     this.props.scrollTop();
   };
 
+  skipCurrentProfileHelper = async (currProfile) => {
+    //confirmation dialog
+    const consent = this.props.userConsent(
+      "Are you sure you want to skip this profile for now. It is not recommended.."
+    );
+    if (consent) {
+      const [status, msg] = await this.props.skipCurrentProfileCallback(
+        currProfile
+      );
+      if (!status) {
+        this.setErrorMsg(msg);
+      }
+    }
+  };
+
   renderVendor = (vendor) => {
     return (
-      <Card className="w-100 bg-secondary text-white">
+      <Card className="w-100 bg-secondary text-white m-3">
         <Card.Body>
           <h3 className="text-center mb-4">{vendor.name}</h3>
           {this.state.errorMsg && (
@@ -217,8 +232,10 @@ export default class VendorReviewFormView extends Component {
                 minLength="3"
                 maxLength="40"
                 defaultValue={vendor.name}
+                readOnly={this.state.showSkipHourSelection}
               />
             </Form.Group>
+
             <Form.Group id="contact">
               <Form.Label>Primary Contact</Form.Label>
               <Form.Control
@@ -336,28 +353,30 @@ export default class VendorReviewFormView extends Component {
                 )}
               </div>
             </div>
+            <div className="text-center">
+              <Button
+                disabled={this.state.loading}
+                className="w-50 btn btn-success m-3"
+                type="submit"
+              >
+                Approve
+              </Button>
 
-            <Button
-              disabled={this.state.loading}
-              className="w-100 btn btn-success mt-3"
-              type="submit"
-            >
-              Approve
-            </Button>
-
-            <Button
-              disabled={this.state.loading}
-              className="w-100 btn btn-primary mt-3"
-              onClick={this.resetVendorProfile}
-            >
-              Reset
-            </Button>
-            <Button
-              disabled={this.state.loading}
-              className="w-100 btn btn-danger mt-3"
-            >
-              Review Later
-            </Button>
+              <Button
+                disabled={this.state.loading}
+                className="w-50 btn btn-primary m-3"
+                onClick={this.resetVendorProfile}
+              >
+                Reset
+              </Button>
+              <Button
+                disabled={this.state.loading}
+                className="w-50 btn btn-danger m-3"
+                onClick={() => this.skipCurrentProfileHelper(this.state.vendor)}
+              >
+                Review Later
+              </Button>
+            </div>
           </Form>
         </Card.Body>
       </Card>

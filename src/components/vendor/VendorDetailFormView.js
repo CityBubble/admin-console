@@ -350,7 +350,6 @@ export default class VendorDetailFormView extends Component {
                 required
                 defaultValue={vendor.subscription.status}
               >
-                <option value="verification">Under Verification</option>
                 <option value="subscribed">Subscribed</option>
                 <option value="unsubscribed">Un-Subscribed</option>
                 <option value="freeze">Freeze</option>

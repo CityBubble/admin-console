@@ -129,7 +129,7 @@ async function modifyVendorData(cityCode, modifiedVendor) {
   }
 
   const vendorDocRef = getCollectionRef(cityCode).doc(modifiedVendor.uid);
-  // call cloud function on edit event to update all ads data with latest vals
+  //TODO: call cloud function on edit event to update all ads data with latest vals
   await vendorDocRef.update(modifiedVendor);
   console.log("vendor updated successfully");
 }
@@ -159,7 +159,7 @@ async function addNewVendorProfile(vendorObj) {
   }
   const vendorCollRef = getCollectionRef(vendorObj.address.city.code);
   const vendorDocRef = vendorCollRef.doc();
-  vendorObj['uid'] = vendorDocRef.id;
+  vendorObj["uid"] = vendorDocRef.id;
   console.log("ref id => " + vendorDocRef.id);
   if (vendorObj.logoUrl) {
     const fileUrl = await uploadVendorLogo(
@@ -169,15 +169,12 @@ async function addNewVendorProfile(vendorObj) {
     );
     if (fileUrl) {
       vendorObj["logoUrl"] = fileUrl;
-      await vendorDocRef.set(vendorObj);
-      console.log("New vendor added successfully");
     } else {
       throw new Error("Could not obtain file URL. Try later");
     }
-  } else {
-    await vendorDocRef.set(vendorObj);
-    console.log("New vendor added successfully");
   }
+  await vendorDocRef.set(vendorObj);
+  console.log("New vendor added successfully");
 }
 
 async function uploadVendorLogo(cityCode, docId, imgFile) {

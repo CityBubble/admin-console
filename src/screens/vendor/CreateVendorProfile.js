@@ -173,7 +173,7 @@ export default function CreateVendorProfile() {
       subscription: {
         status: Constants.VENDOR_PROFILE_INITIAL_SUBSCRIPTIONS_STATUS,
       },
-      profile_status: Constants.VENDOR_PROFILE_INITIAL_VERIFY_STATUS,
+      profile_status: Constants.VENDOR_PROFILE_QUEUED_STATUS,
       timeline: {
         request_date: new Date(),
       },

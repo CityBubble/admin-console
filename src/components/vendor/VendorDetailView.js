@@ -97,6 +97,18 @@ export default class VendorDetailView extends Component {
                 </td>
               </tr>
             )}
+            {vendor.reviewer && (
+              <tr>
+                <td style={{ color: "#ffc93c" }}>Reviewer Name</td>
+                <td>{vendor.reviewer.name}</td>
+              </tr>
+            )}
+            {vendor.reviewer && (
+              <tr>
+                <td style={{ color: "#ffc93c" }}>Reviewer Email</td>
+                <td>{vendor.reviewer.email}</td>
+              </tr>
+            )}
           </tbody>
         </Table>
       </div>
