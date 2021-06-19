@@ -6,10 +6,12 @@ import VendorListView from "../../components/vendor/VendorListView";
 import VendorDetailView from "../../components/vendor/VendorDetailView";
 import { useUtility } from "../../util/Utility";
 import { useUIUtility } from "../../util/UIUtility";
+import Constants from "../../util/Constants";
 
 export default function ViewVendors() {
   const searchFormRef = useRef();
   const cityRef = useRef();
+  const nameRef = useRef();
   const profileStatusRef = useRef();
   const subscriptionStatusRef = useRef();
   const categoryRef = useRef();
@@ -35,6 +37,11 @@ export default function ViewVendors() {
 
   function constructFilterCriteria() {
     let filterObj = {};
+    const vendor_name = nameRef.current.value.trim();
+    if (vendor_name.length > 0) {
+      filterObj["name"] = formatTextCasing(vendor_name);
+      return filterObj;
+    }
     const profile_status = profileStatusRef.current.value.trim();
     if (profile_status.length > 0) {
       filterObj["profile_status"] = profile_status;
@@ -212,14 +219,34 @@ export default function ViewVendors() {
 
             {cityCode && cityCode !== "null" && (
               <div>
+                <FormLabel>
+                  <strong>Apply Filters:</strong>
+                </FormLabel>
+
+                <Form.Group id="name">
+                  <Form.Control
+                    type="text"
+                    placeholder="Vendor name (no other filter can be applied with name)"
+                    ref={nameRef}
+                    minLength="3"
+                    maxLength="20"
+                  />
+                </Form.Group>
+
                 <Form.Group id="status">
                   <Form.Control as="select" ref={profileStatusRef}>
                     <option value="">
                       Select verification status (optional..)
                     </option>
-                    <option value="queued">Queued</option>
-                    <option value="review">Under Review</option>
-                    <option value="verified">Verified</option>
+                    <option value={Constants.VENDOR_PROFILE_QUEUED_STATUS}>
+                      Queued
+                    </option>
+                    <option value={Constants.VENDOR_PROFILE_REVIEW_STATUS}>
+                      Under Review
+                    </option>
+                    <option value={Constants.VENDOR_PROFILE_VERIFY_STATUS}>
+                      Verified
+                    </option>
                   </Form.Control>
                 </Form.Group>
 
@@ -228,10 +255,34 @@ export default function ViewVendors() {
                     <option value="">
                       Select subcription status (optional..)
                     </option>
-                    <option value="verification">Under Verification</option>
-                    <option value="subscribed">Subscribed</option>
-                    <option value="unsubscribed">Un-Subscribed</option>
-                    <option value="freeze">Freeze</option>
+                    <option
+                      value={
+                        Constants.VENDOR_PROFILE_SUBSCRIPTION_VERIFY_STATUS
+                      }
+                    >
+                      Under Verification
+                    </option>
+                    <option
+                      value={
+                        Constants.VENDOR_PROFILE_SUBSCRIPTION_SUBSCRIBED_STATUS
+                      }
+                    >
+                      Subscribed
+                    </option>
+                    <option
+                      value={
+                        Constants.VENDOR_PROFILE_SUBSCRIPTION_UNSUBSCRIBED_STATUS
+                      }
+                    >
+                      Un-Subscribed
+                    </option>
+                    <option
+                      value={
+                        Constants.VENDOR_PROFILE_SUBSCRIPTION_FREEZE_STATUS
+                      }
+                    >
+                      Freeze
+                    </option>
                   </Form.Control>
                 </Form.Group>
 

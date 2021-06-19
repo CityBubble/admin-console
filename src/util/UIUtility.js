@@ -1,19 +1,21 @@
+import Constants from "./Constants";
+
 export function useUIUtility() {
   return actions;
 }
 
 function getStatusTextColor(status) {
   switch (status) {
-    case "queued":
+    case Constants.ADS_QUEUED_STATUS:
       return "#ffd56b";
-    case "review":
+    case Constants.ADS_REVIEW_STATUS:
       return "#da7f8f";
-    case "verified":
-    case "active":
+    case Constants.VENDOR_PROFILE_VERIFY_STATUS:
+    case Constants.ADS_ACTIVE_STATUS:
       return "#1eae98";
-    case "freeze":
+    case Constants.ADS_FREEZE_STATUS:
       return "#39a9cb";
-    case "expired":
+    case Constants.ADS_EXPIRED_STATUS:
       return "#f55c47";
     default:
       return "white";
@@ -22,13 +24,13 @@ function getStatusTextColor(status) {
 
 function getSubscriptionStatusTextColor(status) {
   switch (status) {
-    case "verification":
+    case Constants.VENDOR_PROFILE_SUBSCRIPTION_VERIFY_STATUS:
       return "#ffd56b";
-    case "subscribed":
+    case Constants.VENDOR_PROFILE_SUBSCRIPTION_SUBSCRIBED_STATUS:
       return "#1eae98";
-    case "freeze":
+    case Constants.VENDOR_PROFILE_SUBSCRIPTION_FREEZE_STATUS:
       return "#39a9cb";
-    case "unsubscribed":
+    case Constants.VENDOR_PROFILE_SUBSCRIPTION_UNSUBSCRIBED_STATUS:
       return "#f55c47";
     default:
       return "white";
@@ -37,11 +39,11 @@ function getSubscriptionStatusTextColor(status) {
 
 function getPriorityText(priority) {
   switch (priority) {
-    case 1:
+    case Constants.PRIORITY_ELITE:
       return "High (Elite)";
-    case 2:
+    case Constants.PRIORITY_PREMIUM:
       return "Medium (Premium)";
-    case 3:
+    case Constants.PRIORITY_STANDARD:
       return "Low (Basic)";
     default:
       return "Unknown";

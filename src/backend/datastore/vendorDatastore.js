@@ -38,6 +38,10 @@ async function getVendors(cityCode, limit, filterObj) {
 
 function constructQuery(query, filterObj) {
   if (filterObj) {
+    if (filterObj.name) {
+      query = query.where("name", "==", filterObj.name);
+      return query;
+    }
     if (filterObj.profile_status) {
       query = query.where("profile_status", "==", filterObj.profile_status);
     }
@@ -101,7 +105,7 @@ async function getVendorBySearchField(
   }
   let vendors = [];
   snapshot.forEach((doc) => {
-    vendors.push({ uid: doc.id, ...doc.data() });
+    vendors.push(doc.data());
   });
   return vendors;
 }

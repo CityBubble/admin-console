@@ -171,7 +171,7 @@ export default function CreateVendorProfile() {
         },
       },
       subscription: {
-        status: Constants.VENDOR_PROFILE_INITIAL_SUBSCRIPTIONS_STATUS,
+        status: Constants.VENDOR_PROFILE_SUBSCRIPTION_VERIFY_STATUS,
       },
       profile_status: Constants.VENDOR_PROFILE_QUEUED_STATUS,
       timeline: {

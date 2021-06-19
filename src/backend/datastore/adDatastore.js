@@ -24,7 +24,6 @@ async function addNewAd(adObj) {
   ) {
     throw new Error("Missing city code");
   }
-
   const adCollRef = getCollectionRef(adObj.vendor.address.city.code);
   const adDocRef = adCollRef.doc();
   console.log("ref id => " + adDocRef.id);
@@ -104,7 +103,6 @@ async function getAdsForModification(cityCode, vendorName) {
     .orderBy("timeline.publish_date", "desc");
 
   const snapshot = await query.limit(15).get();
-
   let ads = [];
   snapshot.forEach((doc) => {
     let obj = doc.data();

@@ -350,9 +350,25 @@ export default class VendorDetailFormView extends Component {
                 required
                 defaultValue={vendor.subscription.status}
               >
-                <option value="subscribed">Subscribed</option>
-                <option value="unsubscribed">Un-Subscribed</option>
-                <option value="freeze">Freeze</option>
+                <option
+                  value={
+                    Constants.VENDOR_PROFILE_SUBSCRIPTION_SUBSCRIBED_STATUS
+                  }
+                >
+                  Subscribed
+                </option>
+                <option
+                  value={
+                    Constants.VENDOR_PROFILE_SUBSCRIPTION_UNSUBSCRIBED_STATUS
+                  }
+                >
+                  Un-Subscribed
+                </option>
+                <option
+                  value={Constants.VENDOR_PROFILE_SUBSCRIPTION_FREEZE_STATUS}
+                >
+                  Freeze
+                </option>
               </Form.Control>
             </Form.Group>
             <div className="row">

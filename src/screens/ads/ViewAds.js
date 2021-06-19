@@ -6,6 +6,7 @@ import AdsListView from "../../components/ads/AdListView";
 import { useUtility } from "../../util/Utility";
 import { useUIUtility } from "../../util/UIUtility";
 import AdDetailView from "../../components/ads/AdDetailView";
+import Constants from "../../util/Constants";
 
 export default function ViewAds() {
   const searchFormRef = useRef();
@@ -231,20 +232,30 @@ export default function ViewAds() {
                 <Form.Group id="priority">
                   <Form.Control as="select" ref={priorityRef}>
                     <option value="">Select priority</option>
-                    <option value="1">High (Elite)</option>
-                    <option value="2">Medium (Premium)</option>
-                    <option value="3">Low (Basic)</option>
+                    <option value={Constants.PRIORITY_ELITE}>
+                      {getPriorityText(Constants.PRIORITY_ELITE)}
+                    </option>
+                    <option value={Constants.PRIORITY_PREMIUM}>
+                      {getPriorityText(Constants.PRIORITY_PREMIUM)}
+                    </option>
+                    <option value={Constants.PRIORITY_STANDARD}>
+                      {getPriorityText(Constants.PRIORITY_STANDARD)}
+                    </option>
                   </Form.Control>
                 </Form.Group>
 
                 <Form.Group id="status">
                   <Form.Control as="select" ref={statusRef}>
                     <option value="">Select status</option>
-                    <option value="queued">Queued</option>
-                    <option value="review">Under Review</option>
-                    <option value="active">Active</option>
-                    <option value="freeze">Freeze</option>
-                    <option value="expired">Expired</option>
+                    <option value={Constants.ADS_QUEUED_STATUS}>Queued</option>
+                    <option value={Constants.ADS_REVIEW_STATUS}>
+                      Under Review
+                    </option>
+                    <option value={Constants.ADS_ACTIVE_STATUS}>Active</option>
+                    <option value={Constants.ADS_FREEZE_STATUS}>Freeze</option>
+                    <option value={Constants.ADS_EXPIRED_STATUS}>
+                      Expired
+                    </option>
                   </Form.Control>
                 </Form.Group>
 

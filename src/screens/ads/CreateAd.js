@@ -59,6 +59,7 @@ export default function CreateaAd() {
     setLoading(true);
     if (validateAdForm()) {
       const adObj = constructNewAdObject();
+      console.log("AD OBJ = " + JSON.stringify(adObj));
       try {
         await addNewAd(adObj);
         setMessage("Ad created Successfully");
@@ -121,34 +122,23 @@ export default function CreateaAd() {
       timeline: {
         request_date: today,
         expiry_date: endDate,
-        //TODO: temporary should remove it once REVIEW AD is done
-        review_date: today,
-        publish_date: today,
       },
       ad_status: {
-        status: Constants.ADS_ACTIVE_STATUS, //Constants.ADS_INITIAL_VERIFY_STATUS,
-        //temporary should remove it once REVIEW AD is done
-        reviewed_by: {
-          uid: "uid",
-          name: "name",
-          email: "email",
-        },
+        status: Constants.ADS_QUEUED_STATUS,
       },
       vendor: {
         uid: activeVendor.uid,
         name: activeVendor.name,
         contact: activeVendor.contact,
         category: activeVendor.category,
+        labels: activeVendor.labels,
         address: activeVendor.address,
       },
-      priority: 1, // should be deduced from vendor's subscription plan
-      //temporary should remove it once REVIEW AD is done
-      processed: {
-        tagline: "Processed: " + taglineRef.current.value,
-        desc: "Processed: " + descRef.current.value,
-        img_url: null,
-      },
+      priority: activeVendor.subscription.current_plan.priority,
     };
+    if (activeVendor.logoUrl) {
+      adObj.vendor.logoUrl = activeVendor.logoUrl;
+    }
     return adObj;
   }
 
@@ -215,16 +205,18 @@ export default function CreateaAd() {
               )}
               <Card.Body>
                 <Card.Title>{currProfile.name}</Card.Title>
+                <Card.Text>Uid = {currProfile.uid}</Card.Text>
                 <Card.Text>Area = {currProfile.address.area}</Card.Text>
                 <Card.Text>
-                  Verification status = {currProfile.status}
+                  Verification status = {currProfile.profile_status}
                 </Card.Text>
                 <Card.Text>
                   Subscription status = {currProfile.subscription.status}
                 </Card.Text>
                 {!showNewAdForm &&
                   currProfile.subscription &&
-                  currProfile.subscription.status === "subscribed" && (
+                  currProfile.subscription.status ===
+                    Constants.VENDOR_PROFILE_SUBSCRIPTION_SUBSCRIBED_STATUS && (
                     <Button
                       variant="primary"
                       onClick={() => {
