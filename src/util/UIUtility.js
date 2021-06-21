@@ -50,8 +50,16 @@ function getPriorityText(priority) {
   }
 }
 
+function convertArrayToText(items) {
+  if (!items || items.length === 0) {
+    return "N/A";
+  }
+  return items.join(", ");
+}
+
 const actions = {
   getStatusTextColor,
   getSubscriptionStatusTextColor,
   getPriorityText,
+  convertArrayToText,
 };

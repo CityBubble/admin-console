@@ -1,5 +1,6 @@
 import { Component } from "react";
 import { Table } from "react-bootstrap";
+import GalleryView from "./GalleryView";
 
 export default class AdDetailView extends Component {
   render() {
@@ -64,6 +65,13 @@ export default class AdDetailView extends Component {
                     .toDate()
                     .toString()
                     .substring(0, 24)}
+                </td>
+              </tr>
+            )}
+            {currentAd.gallery && currentAd.gallery.length > 0 && (
+              <tr>
+                <td colSpan="2">
+                  <GalleryView gallery={currentAd.gallery}></GalleryView>
                 </td>
               </tr>
             )}

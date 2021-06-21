@@ -206,11 +206,19 @@ export default class AdDetailFormView extends Component {
           <Card.Title>
             {currAd.vendor.name} ({currAd.vendor.address.area})
           </Card.Title>
+          <Card.Text>
+            Categories = {this.props.formatArrToText(currAd.vendor.category)}
+          </Card.Text>
+          <Card.Text>
+            Labels = {this.props.formatArrToText(currAd.vendor.labels)}
+          </Card.Text>
           <Card.Text>Uid = {currAd.uid}</Card.Text>
           <Card.Text>Tagline = {currAd.processed.tagline}</Card.Text>
           <Card.Text>Description = {currAd.processed.desc}</Card.Text>
           <Card.Text>Status = {currAd.ad_status.status}</Card.Text>
-          <Card.Text>Priority = {currAd.priority}</Card.Text>
+          <Card.Text>
+            Priority = {this.props.getPriorityText(currAd.priority)}
+          </Card.Text>
           <Card.Text>
             Published On ={" "}
             {currAd.timeline.publish_date.toDate().toString().substring(0, 24)}

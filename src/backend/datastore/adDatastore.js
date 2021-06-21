@@ -1,4 +1,4 @@
-import { db } from "../firebase";
+import { db, storage } from "../firebase";
 import Collection from "../collectionConstants";
 
 export function useAdDataStore() {
@@ -12,8 +12,13 @@ function getCollectionRef(cityCode) {
     .collection(Collection.SUB_COLL_ADS);
 }
 
+function getAdsStorageRef(cityCode, uid, subPath = "") {
+  return storage.ref(
+    `/${cityCode}/${Collection.SUB_COLL_ADS}/${uid}/${subPath}`
+  );
+}
+
 async function addNewAd(adObj) {
-  console.log("addNewAd for " + JSON.stringify(adObj));
   if (!adObj) {
     throw new Error("Invalid Ad Obj");
   }
@@ -27,11 +32,13 @@ async function addNewAd(adObj) {
   const adCollRef = getCollectionRef(adObj.vendor.address.city.code);
   const adDocRef = adCollRef.doc();
   console.log("ref id => " + adDocRef.id);
-  if (adObj.logoUrl) {
-  } else {
-    await adDocRef.set(adObj);
-    console.log("New ad added successfully");
+  adObj.uid = adDocRef.id;
+  if (adObj.gallery.length > 0) {
+    adObj.gallery = await uploadGallery(adObj);
+    console.log(adObj.gallery);
   }
+  await adDocRef.set(adObj);
+  console.log("New ad added successfully");
 }
 
 async function getAds(cityCode, limit, filterObj) {
@@ -103,6 +110,9 @@ async function getAdsForModification(cityCode, vendorName) {
     .orderBy("timeline.publish_date", "desc");
 
   const snapshot = await query.limit(15).get();
+  if (snapshot.empty) {
+    throw new Error("No Records Found ..");
+  }
   let ads = [];
   snapshot.forEach((doc) => {
     let obj = doc.data();
@@ -120,6 +130,37 @@ async function modifyAd(cityCode, modifiedAd) {
   const adDocRef = getCollectionRef(cityCode).doc(modifiedAd.uid);
   await adDocRef.update(modifiedAd);
   console.log("ad updated successfully");
+}
+
+async function uploadGallery(adObj) {
+  console.log("uploadGallery()");
+  let galleryUrls = [];
+  let storageRef = getAdsStorageRef(
+    adObj.vendor.address.city.code,
+    adObj.uid,
+    Collection.STORAGE_AD_PATH_GALLERY
+  );
+  await Promise.all(
+    adObj.gallery.map(async (item) => {
+      const fileUrl = await uploadImage(storageRef, item.img);
+      if (fileUrl) {
+        galleryUrls.push(fileUrl);
+        console.log("Image uploaded successfully");
+      } else {
+        throw new Error("Could not obtain file URL. Try later");
+      }
+    })
+  );
+  return galleryUrls;
+}
+
+async function uploadImage(storageRef, imgFile) {
+  console.log("UPLOADING GALLERY IMAGE");
+  const imgRef = storageRef.child(imgFile.name);
+  await imgRef.put(imgFile);
+  const fileUrl = await imgRef.getDownloadURL();
+  console.log("OBTAINED IMAGE URL => " + fileUrl);
+  return fileUrl;
 }
 
 const actions = {

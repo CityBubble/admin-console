@@ -107,18 +107,51 @@ async function tempFunc() {
 
   const snapshot = await coll.get();
 
-  snapshot.forEach((doc) => {
+  snapshot.forEach(async (doc) => {
     let vendor = doc.data();
     console.log("vendor ->" + vendor.name);
-    if (vendor.status) {
-      vendor.profile_status = vendor.status;
-      delete vendor.status;
-      console.log(JSON.stringify(vendor));
-      const vdoc = coll.doc(vendor.uid);
 
+    if (
+      vendor.subscription &&
+      vendor.subscription.status === "subscribed" &&
+      !vendor.subscription.current_plan.ad_gallery
+    ) {
+      console.log(JSON.stringify(vendor.subscription));
+      vendor.subscription.current_plan.ad_gallery = 4;
+
+      const vdoc = coll.doc(vendor.uid);
+      await vdoc.update(vendor);
       console.log(
-        "updated -> " + vendor.name + " status = " + vendor.profile_status
+        "updated -> " +
+          vendor.name +
+          " gallery = " +
+          vendor.subscription.current_plan.ad_gallery
       );
+    }
+  });
+}
+
+//TODO : remove later
+async function tempFuncAds() {
+  console.log("tempFuncAds");
+  const coll = db
+    .collection(Collection.COLL_CITIES)
+    .doc("asr")
+    .collection(Collection.SUB_COLL_ADS);
+
+  const snapshot = await coll.get();
+
+  snapshot.forEach(async (doc) => {
+    let ad = doc.data();
+    let vendor = ad.vendor;
+    console.log("ad ->" + vendor.name);
+
+    if (!ad.vendor.labels) {
+      console.log(JSON.stringify(ad));
+      ad.vendor.labels = [];
+      const adoc = coll.doc(doc.id);
+      await adoc.update(ad);
+      console.log("updated -> " + vendor.name + " labels = " + ad.gallery);
     }
   });
 }

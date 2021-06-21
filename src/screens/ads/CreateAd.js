@@ -1,11 +1,14 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
-import { Form, Button, Card, Alert } from "react-bootstrap";
+import { Form, Button, Card, Alert, Carousel, Image } from "react-bootstrap";
 import { useUtility } from "../../util/Utility";
 import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
 import { useAdDataStore } from "../../backend/datastore/adDatastore";
 import Constants from "../../util/Constants";
+import AdGallery from "../../components/ads/AdGallery";
+import GalleryView from "../../components/ads/GalleryView";
+import { useUIUtility } from "../../util/UIUtility";
 
 export default function CreateaAd() {
   const getVendorFormRef = useRef();
@@ -24,11 +27,13 @@ export default function CreateaAd() {
   const [vendorProfiles, setVendorProfiles] = useState([]);
   const [activeVendor, setActiveVendor] = useState(null);
   const [showNewAdForm, setShowNewAdForm] = useState(false);
+  const [adGallery, setGallery] = useState([]);
 
   const { getVendorBySearchField } = useVendorDataStore();
   const { addNewAd } = useAdDataStore();
 
   const { formatTextCasing } = useUtility();
+  const { getPriorityText, convertArrayToText } = useUIUtility();
 
   async function handleGetVendorDataSubmit(e) {
     console.log("handleGetVendorDataSubmit");
@@ -38,6 +43,7 @@ export default function CreateaAd() {
     setVendorProfiles([]);
     setActiveVendor(null);
     setShowNewAdForm(false);
+    setGallery([]);
     try {
       const searchVal = formatTextCasing(nameRef.current.value);
       const vendors = await getVendorBySearchField(
@@ -59,7 +65,6 @@ export default function CreateaAd() {
     setLoading(true);
     if (validateAdForm()) {
       const adObj = constructNewAdObject();
-      console.log("AD OBJ = " + JSON.stringify(adObj));
       try {
         await addNewAd(adObj);
         setMessage("Ad created Successfully");
@@ -135,11 +140,18 @@ export default function CreateaAd() {
         address: activeVendor.address,
       },
       priority: activeVendor.subscription.current_plan.priority,
+      gallery: adGallery,
     };
     if (activeVendor.logoUrl) {
       adObj.vendor.logoUrl = activeVendor.logoUrl;
     }
     return adObj;
+  }
+
+  function tagImagesToAdGalleryCallback(gallery) {
+    console.log("tagImagesToAdGalleryCallback = " + gallery.length);
+    setGallery(gallery);
+    console.log("gallery tagged !");
   }
 
   const renderGetVendorProfileForm = () => {
@@ -206,12 +218,22 @@ export default function CreateaAd() {
               <Card.Body>
                 <Card.Title>{currProfile.name}</Card.Title>
                 <Card.Text>Uid = {currProfile.uid}</Card.Text>
-                <Card.Text>Area = {currProfile.address.area}</Card.Text>
                 <Card.Text>
-                  Verification status = {currProfile.profile_status}
+                  Categories = {convertArrayToText(currProfile.category)}
                 </Card.Text>
                 <Card.Text>
-                  Subscription status = {currProfile.subscription.status}
+                  Labels = {convertArrayToText(currProfile.labels)}
+                </Card.Text>
+                <Card.Text>Area = {currProfile.address.area}</Card.Text>
+                <Card.Text>
+                  Subscription Plan=
+                  {getPriorityText(
+                    currProfile.subscription.current_plan.priority
+                  )}
+                </Card.Text>
+                <Card.Text>
+                  Max Gallery Size =
+                  {currProfile.subscription.current_plan.ad_gallery}
                 </Card.Text>
                 {!showNewAdForm &&
                   currProfile.subscription &&
@@ -239,7 +261,7 @@ export default function CreateaAd() {
 
   const renderNewAdForm = () => {
     return (
-      <Card className="w-50">
+      <Card style={{ width: "auto" }}>
         <Card.Body>
           <h3 className="text-center mb-4">
             {activeVendor.name} - {activeVendor.address.area}
@@ -273,7 +295,7 @@ export default function CreateaAd() {
               <Form.Label>Valid Till:</Form.Label>
               <Form.Control type="date" ref={endDateRef} />
             </Form.Group>
-
+            <GalleryView gallery={adGallery}></GalleryView>
             <Button disabled={loading} className="w-100 mt-3" type="submit">
               Create AD
             </Button>
@@ -294,6 +316,7 @@ export default function CreateaAd() {
                 clearMessageFields();
                 newAdFormRef.current.reset();
                 setShowNewAdForm(false);
+                setGallery([]);
               }}
             >
               Cancel
@@ -310,9 +333,18 @@ export default function CreateaAd() {
         <div className="col"> {renderGetVendorProfileForm()}</div>
         <div className="col">{vendorProfiles && renderVendorProfiles()}</div>
       </div>
-      <div className="col mt-3 w-70">
-        {" "}
-        {showNewAdForm && renderNewAdForm()}{" "}
+      <div className="col mt-3">
+        <div className="row">
+          <div className="col">{showNewAdForm && renderNewAdForm()}</div>
+          <div className="col">
+            {showNewAdForm && (
+              <AdGallery
+                maxCount={activeVendor.subscription.current_plan.ad_gallery}
+                tagImages={tagImagesToAdGalleryCallback}
+              ></AdGallery>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );

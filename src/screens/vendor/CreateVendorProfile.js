@@ -179,7 +179,7 @@ export default function CreateVendorProfile() {
       },
     };
     if (currLogoImg) {
-      vendorObj["logoUrl"] = currLogoImg;
+      vendorObj["newProfileImg"] = currLogoImg;
     }
     return vendorObj;
   }

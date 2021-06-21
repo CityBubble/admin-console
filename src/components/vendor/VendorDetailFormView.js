@@ -375,7 +375,6 @@ export default class VendorDetailFormView extends Component {
               {vendor.logoUrl && (
                 <div className="col">
                   <h5>Profile Logo</h5>
-
                   <Image
                     src={vendor.logoUrl}
                     rounded

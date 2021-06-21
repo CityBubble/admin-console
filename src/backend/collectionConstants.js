@@ -4,5 +4,6 @@ module.exports = Object.freeze({
   SUB_COLL_VENDORS: "vendors",
   SUB_COLL_ADS: "ads",
   SUB_COLL_VENDOR_BILLING_CYCLES: "billing_cycles",
-  SUB_COLL_VENDOR_PAYMENT_HISTORY: "payment_history"
+  SUB_COLL_VENDOR_PAYMENT_HISTORY: "payment_history",
+  STORAGE_AD_PATH_GALLERY: "gallery",
 });

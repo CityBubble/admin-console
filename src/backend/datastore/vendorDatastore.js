@@ -115,25 +115,9 @@ async function modifyVendorData(cityCode, modifiedVendor) {
   if (!cityCode || !modifiedVendor) {
     throw new Error("Invalid Arguments");
   }
-
-  if (modifiedVendor.newProfileImg) {
-    console.log("profile image found");
-    const fileUrl = await uploadVendorLogo(
-      cityCode,
-      modifiedVendor.uid,
-      modifiedVendor.newProfileImg
-    );
-    if (fileUrl) {
-      modifiedVendor["logoUrl"] = fileUrl;
-      delete modifiedVendor.newProfileImg;
-      console.log("Image uploaded successfully");
-    } else {
-      throw new Error("Could not obtain file URL. Try later");
-    }
-  }
-
+  modifiedVendor = await tagLogoUrl(modifiedVendor);
   const vendorDocRef = getCollectionRef(cityCode).doc(modifiedVendor.uid);
-  //TODO: call cloud function on edit event to update all ads data with latest vals
+  //TODO: call cloud function on edit event to update all ads data with latest value
   await vendorDocRef.update(modifiedVendor);
   console.log("vendor updated successfully");
 }
@@ -165,20 +149,29 @@ async function addNewVendorProfile(vendorObj) {
   const vendorDocRef = vendorCollRef.doc();
   vendorObj["uid"] = vendorDocRef.id;
   console.log("ref id => " + vendorDocRef.id);
-  if (vendorObj.logoUrl) {
+  vendorObj = await tagLogoUrl(vendorObj);
+  await vendorDocRef.set(vendorObj);
+  console.log("New vendor added successfully");
+}
+
+async function tagLogoUrl(profile) {
+  console.log("taglogoURL");
+  if (profile.newProfileImg) {
+    console.log("profile image found");
     const fileUrl = await uploadVendorLogo(
-      vendorObj.address.city.code,
-      vendorDocRef.id,
-      vendorObj.logoUrl
+      profile.address.city.code,
+      profile.uid,
+      profile.newProfileImg
     );
     if (fileUrl) {
-      vendorObj["logoUrl"] = fileUrl;
+      profile["logoUrl"] = fileUrl;
+      delete profile.newProfileImg;
+      console.log("Image uploaded successfully");
     } else {
       throw new Error("Could not obtain file URL. Try later");
     }
   }
-  await vendorDocRef.set(vendorObj);
-  console.log("New vendor added successfully");
+  return profile;
 }
 
 async function uploadVendorLogo(cityCode, docId, imgFile) {

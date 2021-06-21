@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Table } from "react-bootstrap";
+import { Table,Image } from "react-bootstrap";
 
 export default class VendorDetailView extends Component {
   render() {
@@ -107,6 +107,18 @@ export default class VendorDetailView extends Component {
               <tr>
                 <td style={{ color: "#ffc93c" }}>Reviewer Email</td>
                 <td>{vendor.reviewer.email}</td>
+              </tr>
+            )}
+            {vendor.logoUrl && (
+              <tr>
+                <td style={{ color: "#ffc93c" }}>Logo</td>
+                <td>
+                  <Image
+                    src={vendor.logoUrl}
+                    rounded
+                    style={{ width: 300, height: 200 }}
+                  />
+                </td>
               </tr>
             )}
           </tbody>

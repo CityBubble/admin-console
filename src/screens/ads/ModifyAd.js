@@ -5,6 +5,7 @@ import { useAdDataStore } from "../../backend/datastore/adDatastore";
 import AdDetailFormView from "../../components/ads/AdDetailFormView";
 import { useAuth } from "../../context/AuthContext";
 import { useUtility } from "../../util/Utility";
+import { useUIUtility } from "../../util/UIUtility";
 
 export default function ModifyAd() {
   const getVendorAdFormRef = useRef();
@@ -22,6 +23,7 @@ export default function ModifyAd() {
   const { loggedInUser } = useAuth();
 
   const { formatTextCasing, scrollToTop, showConfirmDialog } = useUtility();
+  const { convertArrayToText, getPriorityText } = useUIUtility();
 
   async function handleGetVendorAdsSubmit(e) {
     console.log("handleGetVendorAdsSubmit");
@@ -121,6 +123,8 @@ export default function ModifyAd() {
                 modifyAdCallback={modifySelectedAd}
                 getConfirmation={showConfirmDialog}
                 authUser={loggedInUser}
+                formatArrToText={convertArrayToText}
+                getPriorityText={getPriorityText}
               ></AdDetailFormView>
             </div>
           );
