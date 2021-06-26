@@ -220,8 +220,12 @@ export default class AdDetailFormView extends Component {
             Priority = {this.props.getPriorityText(currAd.priority)}
           </Card.Text>
           <Card.Text>
-            Published On ={" "}
+            Published On =
             {currAd.timeline.publish_date.toDate().toString().substring(0, 24)}
+          </Card.Text>
+          <Card.Text>
+            Expires On =
+            {currAd.timeline.expiry_date.toDate().toString().substring(0, 24)}
           </Card.Text>
           {!this.state.showEditableForm && (
             <Button

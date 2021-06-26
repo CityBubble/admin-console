@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Form, Button, Card, Image, CloseButton } from "react-bootstrap";
+import { Form, Card, Image, CloseButton } from "react-bootstrap";
 
 export default class AdGallery extends Component {
   constructor(props) {

@@ -9,6 +9,9 @@ export default function ReviewActions() {
         <Link to="/reviewVendor" className="btn btn-primary w-100 mt-3">
           Review Vendor Profile
         </Link>
+        <Link to="/reviewAd" className="btn btn-secondary w-100 mt-3">
+          Review Ads
+        </Link>
         <hr />
         <div className="w-100 text-center mt-3">
           <Link to="/">Dashboard</Link>

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useRef, useState } from "react";
-import { Form, Button, Card, Alert, Carousel, Image } from "react-bootstrap";
+import { Form, Button, Card, Alert } from "react-bootstrap";
 import { useUtility } from "../../util/Utility";
 import { useVendorDataStore } from "../../backend/datastore/vendorDatastore";
 import { useAdDataStore } from "../../backend/datastore/adDatastore";

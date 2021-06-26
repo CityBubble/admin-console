@@ -18,6 +18,7 @@ import ViewAds from "./screens/ads/ViewAds";
 import ModifyAd from "./screens/ads/ModifyAd";
 import ReviewActions from "./screens/review/ReviewActions";
 import ReviewVendorProfile from "./screens/review/ReviewVendorProfile";
+import ReviewAd from "./screens/review/ReviewAd";
 
 function App() {
   return (
@@ -54,6 +55,10 @@ function App() {
               <SecureRoute
                 path="/reviewVendor"
                 component={ReviewVendorProfile}
+              />
+              <SecureRoute
+                path="/reviewAd"
+                component={ReviewAd}
               />
             </Switch>
           </AuthProvider>

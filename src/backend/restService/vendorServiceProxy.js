@@ -17,6 +17,7 @@ function getVendorStorageRef(cityCode, uid) {
   return storage.ref(`/${cityCode}/${Collection.SUB_COLL_VENDORS}/${uid}`);
 }
 
+//export function
 async function getVendorProfileForReview(cityCode, authUser) {
   console.log("getVendorProfileForReview for city - " + cityCode);
   const vendorCollRef = getVendorCollectionRef(cityCode);
@@ -78,6 +79,7 @@ function getQueryForNextQueuedProfile(vendorCollRef) {
   return query;
 }
 
+//export function
 async function approveProfile(profile) {
   console.log("approveVendorProfile for city - " + profile.address.city.code);
   profile = await tagLogoUrl(profile);
@@ -194,6 +196,7 @@ async function uploadVendorLogo(cityCode, docId, imgFile) {
   return fileUrl;
 }
 
+//export function
 async function skipReviewForCurrentVendor(profile) {
   console.log("skipReviewForCurrentVendor");
   const vendorCollRef = getVendorCollectionRef(profile.address.city.code);
@@ -206,7 +209,7 @@ async function skipReviewForCurrentVendor(profile) {
     vendorCollRef,
     profile.timeline.request_date
   );
-  vendorDocRef.set(profile);
+  await vendorDocRef.set(profile);
   console.log("profile reverted successfully");
 }
 
