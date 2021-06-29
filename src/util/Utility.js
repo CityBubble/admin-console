@@ -71,6 +71,41 @@ function scrollToTop() {
   });
 }
 
+function getOfferTypesArr() {
+  return [
+    { value: "flat", label: "Flat" },
+    { value: "upto", label: "Upto" },
+    { value: "combo", label: "Combo" },
+    { value: "extra", label: "Extra Benefits" },
+    { value: "other", label: "Other" },
+  ];
+}
+
+function arraysEqual(arr1, arr2) {
+  let result = false;
+  if (Array.isArray(arr1) && Array.isArray(arr2)) {
+    result =
+      arr1.length === arr2.length &&
+      arr1.every((value, index) => value === arr2[index]);
+    return result;
+  }
+  return result;
+}
+
+function extractTermsArrFromInputDescription(desc) {
+  let text = desc.trim();
+  let finalArr = [];
+  if (text.length > 0) {
+    let arr = text.split(";");
+    for (let i = 0; i < arr.length; i++) {
+      if (arr[i].trim().length > 0) {
+        finalArr.push(arr[i].trim());
+      }
+    }
+  }
+  return finalArr;
+};
+
 const actions = {
   isPureString,
   isPureNumber,
@@ -80,4 +115,7 @@ const actions = {
   formatTextCasing,
   formatCaseForCommaSeparatedItems,
   scrollToTop,
+  getOfferTypesArr,
+  arraysEqual,
+  extractTermsArrFromInputDescription,
 };

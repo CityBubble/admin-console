@@ -57,7 +57,7 @@ export default class GalleryView extends Component {
       <div>
         <div className="row mb-3">
           <div className="col">
-            <strong>Gallery: {this.state.localGallery.length}</strong>
+            <strong>Count: {this.state.localGallery.length}</strong>
           </div>
           <div className="col">
             <Button onClick={this.handleReset}>Reset Gallery</Button>
@@ -91,7 +91,7 @@ export default class GalleryView extends Component {
   renderFromProps = () => {
     return (
       <div>
-        <strong>Gallery: {this.props.gallery.length}</strong>
+        <strong>Count: {this.props.gallery.length}</strong>
         <Carousel variant="dark">
           {this.props.gallery.map((imgItem, index) => {
             return (

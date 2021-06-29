@@ -18,15 +18,13 @@ export default function ReviewAd() {
   const { getAdForReview, approveAd, skipReviewForCurrentAd } = useAdService();
   const { loggedInUser } = useAuth();
 
-  const offerTypes = [
-    { value: "flat", label: "Flat" },
-    { value: "upto", label: "Upto" },
-    { value: "combo", label: "Combo" },
-    { value: "extra", label: "Extra Benefits" },
-    { value: "other", label: "Other" },
-  ];
-  const { scrollToTop, showConfirmDialog, dateToInputFieldString } =
-    useUtility();
+  const {
+    scrollToTop,
+    showConfirmDialog,
+    dateToInputFieldString,
+    getOfferTypesArr,
+    extractTermsArrFromInputDescription,
+  } = useUtility();
 
   const { getPriorityText } = useUIUtility();
 
@@ -129,8 +127,9 @@ export default function ReviewAd() {
           scrollTop={scrollToTop}
           userConsent={showConfirmDialog}
           formatDateToInputField={dateToInputFieldString}
-          offerTypes={offerTypes}
+          offerTypes={getOfferTypesArr()}
           getPriorityText={getPriorityText}
+          extractTermsFromDesc={extractTermsArrFromInputDescription}
         ></AdReviewFormView>
       )}
     </div>

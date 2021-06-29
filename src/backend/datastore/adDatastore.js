@@ -18,6 +18,7 @@ function getAdsStorageRef(cityCode, uid, subPath = "") {
   );
 }
 
+// public api
 async function addNewAd(adObj) {
   if (!adObj) {
     throw new Error("Invalid Ad Obj");
@@ -41,6 +42,40 @@ async function addNewAd(adObj) {
   console.log("New ad added successfully");
 }
 
+// operations for create ad
+async function uploadGallery(adObj) {
+  console.log("uploadGallery()");
+  let galleryUrls = [];
+  let storageRef = getAdsStorageRef(
+    adObj.vendor.address.city.code,
+    adObj.uid,
+    Collection.STORAGE_AD_PATH_GALLERY
+  );
+  await Promise.all(
+    adObj.gallery.map(async (item) => {
+      const fileUrl = await uploadImage(storageRef, item.img);
+      if (fileUrl) {
+        galleryUrls.push(fileUrl);
+        console.log("Image uploaded successfully");
+      } else {
+        throw new Error("Could not obtain file URL. Try later");
+      }
+    })
+  );
+  return galleryUrls;
+}
+
+// operations for create ad
+async function uploadImage(storageRef, imgFile) {
+  console.log("UPLOADING GALLERY IMAGE");
+  const imgRef = storageRef.child(imgFile.name);
+  await imgRef.put(imgFile);
+  const fileUrl = await imgRef.getDownloadURL();
+  console.log("OBTAINED IMAGE URL => " + fileUrl);
+  return fileUrl;
+}
+
+// public api
 async function getAds(cityCode, limit, filterObj) {
   console.log("getAds for city - " + cityCode);
   let query = getCollectionRef(cityCode);
@@ -97,6 +132,7 @@ function constructQuery(query, filterObj) {
   return query;
 }
 
+// public api
 async function getAdsForModification(cityCode, vendorName) {
   console.log(
     "getAdsForModification for city - " +
@@ -122,45 +158,66 @@ async function getAdsForModification(cityCode, vendorName) {
   return ads;
 }
 
-async function modifyAd(cityCode, modifiedAd) {
+// public api
+async function modifyAd(cityCode, modifiedAd, removedUrls) {
   console.log("modify Ad data for city- " + cityCode);
   if (!cityCode || !modifiedAd) {
     throw new Error("Invalid Arguments");
+  }
+  if (modifiedAd.processed.img) {
+    modifiedAd = await tagAdCoverUrl(modifiedAd);
+  }
+  if (removedUrls.length > 0) {
+    await removeImagesFromGallery(removedUrls);
   }
   const adDocRef = getCollectionRef(cityCode).doc(modifiedAd.uid);
   await adDocRef.update(modifiedAd);
   console.log("ad updated successfully");
 }
 
-async function uploadGallery(adObj) {
-  console.log("uploadGallery()");
-  let galleryUrls = [];
-  let storageRef = getAdsStorageRef(
-    adObj.vendor.address.city.code,
-    adObj.uid,
-    Collection.STORAGE_AD_PATH_GALLERY
-  );
-  await Promise.all(
-    adObj.gallery.map(async (item) => {
-      const fileUrl = await uploadImage(storageRef, item.img);
-      if (fileUrl) {
-        galleryUrls.push(fileUrl);
-        console.log("Image uploaded successfully");
-      } else {
-        throw new Error("Could not obtain file URL. Try later");
-      }
-    })
-  );
-  return galleryUrls;
+// operations for modify ad
+async function tagAdCoverUrl(adObj) {
+  console.log("tagAdCoverUrl");
+  if (adObj.processed.img) {
+    console.log("ad image found");
+    const fileUrl = await uploadAdCoverImage(
+      adObj.vendor.address.city.code,
+      adObj.uid,
+      adObj.processed.img
+    );
+    if (fileUrl) {
+      adObj.processed.img_url = fileUrl;
+      delete adObj.processed.img;
+      console.log("Image uploaded successfully");
+    } else {
+      throw new Error("Could not obtain file URL. Try later");
+    }
+    return adObj;
+  } else {
+    throw new Error("Ad Cover Image is missing");
+  }
 }
 
-async function uploadImage(storageRef, imgFile) {
-  console.log("UPLOADING GALLERY IMAGE");
-  const imgRef = storageRef.child(imgFile.name);
-  await imgRef.put(imgFile);
-  const fileUrl = await imgRef.getDownloadURL();
-  console.log("OBTAINED IMAGE URL => " + fileUrl);
+// operations for modify ad
+async function uploadAdCoverImage(cityCode, docId, imgFile) {
+  console.log("UPLOADING AD COVER IMAGE");
+  const storageRef = getAdsStorageRef(cityCode, docId);
+  const coverImgRef = storageRef.child("cover");
+  await coverImgRef.put(imgFile);
+  const fileUrl = await coverImgRef.getDownloadURL();
+  console.log("OBTAINED URL => " + fileUrl);
   return fileUrl;
+}
+
+// operations for modify ad
+async function removeImagesFromGallery(removedUrls) {
+  console.log("removeImagesFromGallery");
+  await Promise.all(
+    removedUrls.map(async (url) => {
+      const imgRef = storage.refFromURL(url);
+      await imgRef.delete();
+    })
+  );
 }
 
 const actions = {

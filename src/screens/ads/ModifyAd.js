@@ -22,8 +22,17 @@ export default function ModifyAd() {
   const { getAdsForModification, modifyAd } = useAdDataStore();
   const { loggedInUser } = useAuth();
 
-  const { formatTextCasing, scrollToTop, showConfirmDialog } = useUtility();
-  const { convertArrayToText, getPriorityText } = useUIUtility();
+  const {
+    formatTextCasing,
+    scrollToTop,
+    showConfirmDialog,
+    dateToInputFieldString,
+    getOfferTypesArr,
+    arraysEqual,
+    extractTermsArrFromInputDescription,
+  } = useUtility();
+  const { convertArrayToText, getPriorityText, getStatusTextColor } =
+    useUIUtility();
 
   async function handleGetVendorAdsSubmit(e) {
     console.log("handleGetVendorAdsSubmit");
@@ -52,11 +61,10 @@ export default function ModifyAd() {
     setActiveAd(null);
   }
 
-  async function modifySelectedAd(modifiedAd) {
+  async function modifySelectedAd(modifiedAd, removedUrls) {
     console.log("modifyAd");
     try {
-      //throw new Error("custom error");
-      await modifyAd(cityRef.current.value, modifiedAd);
+      await modifyAd(cityRef.current.value, modifiedAd, removedUrls);
       return [true, "Ad Updated Successfully"];
     } catch (error) {
       return [false, error.message];
@@ -125,6 +133,11 @@ export default function ModifyAd() {
                 authUser={loggedInUser}
                 formatArrToText={convertArrayToText}
                 getPriorityText={getPriorityText}
+                getStatusColor={getStatusTextColor}
+                formatDateToInputField={dateToInputFieldString}
+                offerTypes={getOfferTypesArr()}
+                arraysEqual={arraysEqual}
+                extractTermsFromDesc={extractTermsArrFromInputDescription}
               ></AdDetailFormView>
             </div>
           );

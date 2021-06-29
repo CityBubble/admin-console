@@ -4,13 +4,6 @@ import Constants from "../../util/Constants";
 import GalleryView from "../ads/GalleryView";
 
 export default class AdReviewFormView extends Component {
-  gallery = [
-    "https://homepages.cae.wisc.edu/~ece533/images/pool.png",
-    "https://homepages.cae.wisc.edu/~ece533/images/fruits.png",
-    "https://homepages.cae.wisc.edu/~ece533/images/peppers.png",
-    "https://homepages.cae.wisc.edu/~ece533/images/watch.png",
-  ];
-
   cityBubbleTerm = "This Offer is exclusively available with City Bubble";
   validTillTerm = "Offer valid till: ";
   expiryDateString = null;
@@ -27,7 +20,6 @@ export default class AdReviewFormView extends Component {
       loading: false,
       adCoverImg: null,
       adCoverPreviewUrl: null,
-      originalGallery: this.props.currAd.gallery,
       modifiledGallery: this.props.currAd.gallery,
       removedUrls: [],
       expiryDate: expiryDate.toString().substring(3, 15),
@@ -38,7 +30,7 @@ export default class AdReviewFormView extends Component {
 
   setFormRefs = () => {
     this.taglineRef = React.createRef();
-    this.descRef = React.createRef();
+    this.termsRef = React.createRef();
     this.expiryDateRef = React.createRef();
     this.offerTypeRef = React.createRef();
   };
@@ -254,21 +246,14 @@ export default class AdReviewFormView extends Component {
               <Form.Control
                 as="textarea"
                 rows={5}
-                ref={this.descRef}
+                ref={this.termsRef}
                 required
                 onChange={() => {
-                  let text = this.descRef.current.value.trim();
-                  let finalArr = [];
-                  if (text.length > 0) {
-                    let arr = text.split(";");
-                    for (let i = 0; i < arr.length; i++) {
-                      if (arr[i].trim().length > 0) {
-                        finalArr.push(arr[i].trim());
-                      }
-                    }
-                  }
+                  const termsArr = this.props.extractTermsFromDesc(
+                    this.termsRef.current.value
+                  );
                   this.setState({
-                    processTerms: finalArr,
+                    processTerms: termsArr,
                   });
                 }}
               />
@@ -285,7 +270,7 @@ export default class AdReviewFormView extends Component {
             </Form.Group>
 
             <Form.Group id="expiry_date">
-              <Form.Label>Expiry Date:</Form.Label>
+              <Form.Label>Expiry Date: (Not recommended)</Form.Label>
               <Form.Control
                 type="date"
                 ref={this.expiryDateRef}
@@ -314,7 +299,7 @@ export default class AdReviewFormView extends Component {
             <hr></hr>
 
             <GalleryView
-              gallery={this.state.originalGallery}
+              gallery={this.props.currAd.gallery}
               canRemove={true}
               galleryModifiedCallback={this.handleGalleryModified}
             ></GalleryView>
