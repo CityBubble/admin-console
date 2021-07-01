@@ -159,7 +159,7 @@ async function getAdsForModification(cityCode, vendorName) {
 }
 
 // public api
-async function modifyAd(cityCode, modifiedAd, removedUrls) {
+async function modifyAd(cityCode, modifiedAd, removedUrls = []) {
   console.log("modify Ad data for city- " + cityCode);
   if (!cityCode || !modifiedAd) {
     throw new Error("Invalid Arguments");

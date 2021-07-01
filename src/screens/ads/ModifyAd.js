@@ -17,7 +17,6 @@ export default function ModifyAd() {
   const [loading, setLoading] = useState(false);
 
   const [vendorAds, setVendorAds] = useState([]);
-  const [activeAd, setActiveAd] = useState(null);
 
   const { getAdsForModification, modifyAd } = useAdDataStore();
   const { loggedInUser } = useAuth();
@@ -58,7 +57,6 @@ export default function ModifyAd() {
 
   function resetDefaultState() {
     setVendorAds([]);
-    setActiveAd(null);
   }
 
   async function modifySelectedAd(modifiedAd, removedUrls) {
@@ -66,6 +64,19 @@ export default function ModifyAd() {
     try {
       await modifyAd(cityRef.current.value, modifiedAd, removedUrls);
       return [true, "Ad Updated Successfully"];
+    } catch (error) {
+      return [false, error.message];
+    }
+  }
+
+  async function changeAdStatus(modifiedAd, isStopAction) {
+    console.log("changeAdStatus");
+    try {
+      await modifyAd(cityRef.current.value, modifiedAd);
+      if (isStopAction) {
+        setVendorAds(vendorAds.filter((item) => item.uid !== modifiedAd.uid));
+      }
+      return [true, "Status Updated Successfully"];
     } catch (error) {
       return [false, error.message];
     }
@@ -124,11 +135,12 @@ export default function ModifyAd() {
       <div className="row">
         {vendorAds.map((currAd, index) => {
           return (
-            <div key={index} className="col m-3">
+            <div key={currAd.uid} className="col m-3">
               <AdDetailFormView
                 currentAd={currAd}
                 scrollTop={scrollToTop}
                 modifyAdCallback={modifySelectedAd}
+                changeAdStatusCallback={changeAdStatus}
                 getConfirmation={showConfirmDialog}
                 authUser={loggedInUser}
                 formatArrToText={convertArrayToText}
@@ -150,7 +162,6 @@ export default function ModifyAd() {
     <div>
       {renderGetVendorAdsForm()}
       {vendorAds && renderAds()}
-      {activeAd && JSON.stringify(activeAd)}
     </div>
   );
 }

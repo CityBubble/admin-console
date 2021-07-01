@@ -20,6 +20,10 @@ export default class AdDetailFormView extends Component {
   modifiledGallery = null;
   removedUrls = [];
 
+  ACTION_STOP = "stop";
+  ACTION_FREEZE = "freeze";
+  ACTION_ACTIVATE = "activate";
+
   constructor(props) {
     super(props);
     this.state = {
@@ -322,8 +326,68 @@ export default class AdDetailFormView extends Component {
     return date.toString().substring(0, 24);
   };
 
-  handleAdStatusModifyRequest = (action) => {
-    alert(action);
+  handleAdStatusModifyRequest = async (action) => {
+    const consent = this.props.getConfirmation(
+      `Are you sure you want to ${action} this Ad ?`
+    );
+    if (!consent) {
+      alert("Aborted action");
+      return false;
+    }
+    let adHolderObj = {
+      ad_status: Object.assign({}, this.state.ad.ad_status),
+      timeline: Object.assign({}, this.state.ad.timeline),
+    };
+    let adObj = Object.assign({}, this.state.ad);
+    adObj.ad_status.modified_by = {
+      uid: this.props.authUser.uid,
+      name: this.props.authUser.username,
+      email: this.props.authUser.email,
+      action: action,
+    };
+    adObj = this.constructAdObjBasedonAction(action, adObj);
+    const [status, msg] = await this.props.changeAdStatusCallback(
+      adObj,
+      action === this.ACTION_STOP
+    );
+    if (status) {
+      alert(msg);
+      if (action !== this.ACTION_STOP) {
+        this.setState({
+          ad: {
+            ...adObj,
+          },
+        });
+      }
+    } else {
+      console.log("error while updating ad status");
+      alert(msg);
+      this.setState({
+        ad: {
+          ...this.state.ad,
+          ad_status: adHolderObj.ad_status,
+          timeline: adHolderObj.timeline,
+        },
+      });
+    }
+  };
+
+  constructAdObjBasedonAction = (action, adObj) => {
+    switch (action) {
+      case this.ACTION_STOP:
+        adObj.ad_status.status = Constants.ADS_EXPIRED_STATUS;
+        adObj.timeline.expiry_date = new Date();
+        break;
+      case this.ACTION_FREEZE:
+        adObj.ad_status.status = Constants.ADS_FREEZE_STATUS;
+        adObj.timeline.freeze_date = new Date();
+        break;
+      case this.ACTION_ACTIVATE:
+        adObj.ad_status.status = Constants.ADS_ACTIVE_STATUS;
+        delete adObj.timeline.freeze_date;
+        break;
+    }
+    return adObj;
   };
 
   render() {
@@ -545,6 +609,12 @@ export default class AdDetailFormView extends Component {
                     <strong>Expires On: </strong>
                     {this.getDateString(currAd.timeline.expiry_date)}
                   </Card.Text>
+                  {currAd.timeline.freeze_date && (
+                    <Card.Text>
+                      <strong>Frozen On: </strong>
+                      {this.getDateString(currAd.timeline.freeze_date)}
+                    </Card.Text>
+                  )}
                 </Card.Body>
               </Card>
             </Accordion.Collapse>
@@ -628,7 +698,7 @@ export default class AdDetailFormView extends Component {
             <Button
               variant="danger"
               className="m-3 p-1"
-              onClick={() => this.handleAdStatusModifyRequest("stop")}
+              onClick={() => this.handleAdStatusModifyRequest(this.ACTION_STOP)}
             >
               Stop
             </Button>
@@ -638,7 +708,7 @@ export default class AdDetailFormView extends Component {
               className="m-3 p-1"
               onClick={() =>
                 this.handleAdStatusModifyRequest(
-                  this.isAdActive() ? "freeze" : "activate"
+                  this.isAdActive() ? this.ACTION_FREEZE : this.ACTION_ACTIVATE
                 )
               }
             >
