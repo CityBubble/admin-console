@@ -2,6 +2,7 @@ module.exports = Object.freeze({
   NAME_MIN_LENGTH: 3,
   CONTACT_LENGTH: 10,
   PINCODE_LENGTH: 6,
+  CITY_CODE_LENGHT: 3,
 
   VENDOR_PROFILE_QUEUED_STATUS: "queued",
   VENDOR_PROFILE_REVIEW_STATUS: "review",
