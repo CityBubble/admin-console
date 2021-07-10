@@ -22,7 +22,6 @@ export default class CitiesListView extends Component {
             >
               <thead style={{ color: "#ffc93c" }}>
                 <tr>
-                  {/* <th>Id</th> */}
                   <th>Code</th>
                   <th>Name</th>
                   <th>Vendors</th>
@@ -31,17 +30,15 @@ export default class CitiesListView extends Component {
                 </tr>
               </thead>
               <tbody>
-                {cities.map((city, index) => {
-                  return (
-                    <tr key={index}>
-                      <td>{city.code}</td>
-                      <td>{city.name}</td>
-                      <td>{city.stats.vendors}</td>
-                      <td>{city.stats.ads}</td>
-                      <td>{city.stats.customers}</td>
-                    </tr>
-                  );
-                })}
+                {cities.map((city, index) => (
+                  <tr key={index}>
+                    <td>{city.code}</td>
+                    <td>{city.name}</td>
+                    <td>{city.stats.vendors}</td>
+                    <td>{city.stats.ads}</td>
+                    <td>{city.stats.customers}</td>
+                  </tr>
+                ))}
               </tbody>
             </Table>
             <strong>RECORDS DISPLAYED :</strong> {cities.length}
