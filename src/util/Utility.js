@@ -64,6 +64,18 @@ function formatCaseForCommaSeparatedItems(text) {
   return refinedTextArr;
 }
 
+function trimCommaSeparatedItemsToArray(text) {
+  const rawTextArr = text.split(",");
+  let refinedTextArr = [];
+  for (let i = 0; i < rawTextArr.length; i++) {
+    const val = rawTextArr[i].trim();
+    if (val.length > 0) {
+      refinedTextArr.push(val);
+    }
+  }
+  return refinedTextArr;
+}
+
 function scrollToTop() {
   window.scrollTo({
     top: 0,
@@ -128,4 +140,5 @@ const actions = {
   arraysEqual,
   extractTermsArrFromInputDescription,
   objectArrayContainsValue,
+  trimCommaSeparatedItemsToArray,
 };

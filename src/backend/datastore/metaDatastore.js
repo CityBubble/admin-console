@@ -65,19 +65,63 @@ async function getParentCategories() {
   if (!snapshot.exists) {
     return [];
   }
+  console.log("Parent Categories returned= " + snapshot.data().values.length);
   return snapshot.data().values;
 }
 
-async function getCategoryNames() {
-  console.log("getCategoryNames");
-  const categoryCollRef = getCategoryCollectionRef();
-  const snapshot = await categoryCollRef
-    .doc(Collection.COLL_CATEGORIES_ALL_DOC)
-    .get();
-  if (!snapshot.exists) {
-    return [];
+async function addCategory(categoryObj, parentsArr) {
+  console.log("addCategory for " + JSON.stringify(categoryObj));
+  if (!categoryObj) {
+    throw new Error("invalid category Obj");
   }
-  return snapshot.data().values;
+  const categoryCollRef = getCategoryCollectionRef();
+  const parentDocRef = categoryCollRef.doc(
+    Collection.COLL_CATEGORIES_PARENT_DOC
+  );
+  let parentData = { values: parentsArr };
+  const batch = db.batch();
+  batch.update(parentDocRef, parentData);
+
+  const categoryDocRef = categoryCollRef.doc();
+  categoryObj["uid"] = categoryDocRef.id;
+  batch.set(categoryDocRef, categoryObj);
+
+  await batch.commit();
+  console.log("batch committed succesffully");
+}
+
+async function getCategories() {
+  console.log("getCategories");
+  const categoryCollRef = getCategoryCollectionRef();
+  const snapshot = await categoryCollRef.get();
+
+  let categories = [];
+  snapshot.forEach((doc) => {
+    let obj = doc.data();
+    if (!obj.values) {
+      categories.push({ uid: doc.id, ...obj });
+    }
+  });
+  console.log("Cateories returned= " + categories.length);
+  return categories;
+}
+
+async function addCategoryKeywords(category, keywordsArr) {
+  console.log(
+    "addCategoryKeywords for " + category.uid + " - []= " + keywordsArr
+  );
+  if (!category.uid) {
+    throw new Error("Invalid category identifier => " + category.uid);
+  }
+  const categoryCollRef = getCategoryCollectionRef();
+  const categoryDocRef = categoryCollRef.doc(category.uid);
+  await categoryDocRef.set({
+    uid: category.uid,
+    name: category.name,
+    parent: category.parent,
+    keywords: firestore.FieldValue.arrayUnion(...keywordsArr),
+  });
+  console.log("keywords added successfully");
 }
 
 const actions = {
@@ -85,5 +129,7 @@ const actions = {
   getCities,
   addParent,
   getParentCategories,
-  getCategoryNames,
+  addCategory,
+  getCategories,
+  addCategoryKeywords,
 };

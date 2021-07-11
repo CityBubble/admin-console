@@ -22,6 +22,7 @@ import ReviewAd from "./screens/review/ReviewAd";
 import MetaActions from "./screens/meta/MetaActions";
 import AddCity from "./screens/meta/AddCity";
 import AddParent from "./screens/meta/AddParent";
+import AddCategory from "./screens/meta/AddCategory";
 
 function App() {
   return (
@@ -64,6 +65,7 @@ function App() {
               <SecureRoute path="/meta" component={MetaActions} />
               <SecureRoute path="/addCity" component={AddCity} />
               <SecureRoute path="/addParent" component={AddParent} />
+              <SecureRoute path="/addCategory" component={AddCategory} />
             </Switch>
           </AuthProvider>
         </Router>
