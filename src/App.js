@@ -23,6 +23,7 @@ import MetaActions from "./screens/meta/MetaActions";
 import AddCity from "./screens/meta/AddCity";
 import AddParent from "./screens/meta/AddParent";
 import AddCategory from "./screens/meta/AddCategory";
+import AddTopup from "./screens/meta/AddTopup";
 
 function App() {
   return (
@@ -66,6 +67,7 @@ function App() {
               <SecureRoute path="/addCity" component={AddCity} />
               <SecureRoute path="/addParent" component={AddParent} />
               <SecureRoute path="/addCategory" component={AddCategory} />
+              <SecureRoute path="/addTopup" component={AddTopup} />
             </Switch>
           </AuthProvider>
         </Router>

@@ -13,6 +13,10 @@ function getCategoryCollectionRef() {
   return db.collection(Collection.COLL_CATEGORIES);
 }
 
+function getTopupCollectionRef() {
+  return db.collection(Collection.COLL_TOPUPS);
+}
+
 async function addCity(cityObj) {
   console.log("addCity for " + JSON.stringify(cityObj));
   if (!cityObj) {
@@ -124,6 +128,30 @@ async function addCategoryKeywords(category, keywordsArr) {
   console.log("keywords added successfully");
 }
 
+async function addTopUpPlan(planObj) {
+  console.log("addTopUpPlan for " + JSON.stringify(planObj));
+  if (!planObj) {
+    throw new Error("invalid plan Obj");
+  }
+  const topupCollRef = getTopupCollectionRef();
+  const planDocRef = topupCollRef.doc(planObj.name.toLowerCase());
+  await planDocRef.set(planObj, { merge: true });
+  console.log("New plan added successfully");
+}
+
+async function getTopupPlans() {
+  console.log("getTopupPlans");
+  const topupCollRef = getTopupCollectionRef();
+  const snapshot = await topupCollRef.get();
+
+  let plans = [];
+  snapshot.forEach((doc) => {
+    plans.push(doc.data());
+  });
+  console.log("Top up Plans returned= " + plans.length);
+  return plans;
+}
+
 const actions = {
   addCity,
   getCities,
@@ -132,4 +160,6 @@ const actions = {
   addCategory,
   getCategories,
   addCategoryKeywords,
+  addTopUpPlan,
+  getTopupPlans,
 };

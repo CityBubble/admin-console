@@ -120,7 +120,7 @@ function extractTermsArrFromInputDescription(desc) {
 
 function objectArrayContainsValue(arr, prop, val) {
   if (Array.isArray(arr)) {
-    val = val.toLowerCase();
+    val = val.trim().toLowerCase();
     return arr.some((item) => item[prop].toLowerCase() === val);
   }
   console.log("Not an array");
