@@ -1,5 +1,5 @@
 import { Component } from "react";
-import { Table } from "react-bootstrap";
+import { Table, Button } from "react-bootstrap";
 
 export default class TopupPlanListView extends Component {
   render() {
@@ -33,6 +33,14 @@ export default class TopupPlanListView extends Component {
                     <td>{plan.name}</td>
                     <td>{plan.coupons}</td>
                     <td>{plan.price}</td>
+                    <td className="text-center">
+                      <Button
+                        variant="light"
+                        onClick={() => this.props.deletePlanCallback(plan.name)}
+                      >
+                        Remove
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>

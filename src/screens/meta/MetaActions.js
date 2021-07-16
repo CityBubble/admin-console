@@ -1,10 +1,5 @@
 import React, { useState } from "react";
-import {
-  Card,
-  Dropdown,
-  ButtonGroup,
-  Button,
-} from "react-bootstrap";
+import { Card, CardDeck } from "react-bootstrap";
 import { Link } from "react-router-dom";
 
 export default function MetaActions() {
@@ -26,38 +21,33 @@ export default function MetaActions() {
   }
 
   return (
-    <Card className="w-50">
-      <Card.Header className="text-center">
-        <Dropdown as={ButtonGroup}>
-          <Button variant="primary">{action}</Button>
-          <Dropdown.Toggle split variant="primary" id="dropdown-split-basic" />
-          <Dropdown.Menu>
-            <Dropdown.Item as="button" onClick={() => setAction("City")}>
-              Cities
-            </Dropdown.Item>
-            <Dropdown.Item as="button" onClick={() => setAction("Category")}>
-              Categories
-            </Dropdown.Item>
-            <Dropdown.Item
-              as="button"
-              onClick={() => setAction("Subscription")}
-            >
-              Vendor Subscription
-            </Dropdown.Item>
-            <Dropdown.Item as="button" onClick={() => setAction("Topup")}>
-              Customer TopUps
-            </Dropdown.Item>
-          </Dropdown.Menu>
-        </Dropdown>
-      </Card.Header>
-      <Card.Body>
-        <SwitchActionLinks></SwitchActionLinks>
-        <hr />
-        <div className="w-100 text-center mt-3">
-          <Link to="/">Dashboard</Link>
-        </div>
-      </Card.Body>
-    </Card>
+    <div>
+      <CardDeck className="w-100">
+        <Card className="m-2" onClick={() => setAction("City")}>
+          <Card.Header>Cities</Card.Header>
+        </Card>
+        <Card className="m-2" onClick={() => setAction("Category")}>
+          <Card.Header>Categories</Card.Header>
+        </Card>
+        <Card className="m-2" onClick={() => setAction("Subscription")}>
+          <Card.Header>Vendor Subscription</Card.Header>
+        </Card>
+        <Card className="m-2" onClick={() => setAction("Topup")}>
+          <Card.Header>Customer TopUps</Card.Header>
+        </Card>
+      </CardDeck>
+
+      <Card className="w-50 text-center mt-3">
+        <Card.Body>
+          <Card.Header>{action}</Card.Header>
+          <SwitchActionLinks></SwitchActionLinks>
+          <hr />
+          <div className="w-100 text-center mt-3">
+            <Link to="/">Dashboard</Link>
+          </div>
+        </Card.Body>
+      </Card>
+    </div>
   );
 
   function renderCityOptions() {

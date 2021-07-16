@@ -152,6 +152,14 @@ async function getTopupPlans() {
   return plans;
 }
 
+async function deleteTopUpPlan(planName) {
+  console.log("deleteTopUpPlan : " + planName);
+  const topupCollRef = getTopupCollectionRef();
+  const planDocRef = topupCollRef.doc(planName.toLowerCase());
+  await planDocRef.delete();
+  console.log("Plan deleted successfully");
+}
+
 const actions = {
   addCity,
   getCities,
@@ -162,4 +170,5 @@ const actions = {
   addCategoryKeywords,
   addTopUpPlan,
   getTopupPlans,
+  deleteTopUpPlan
 };

@@ -18,11 +18,12 @@ export default function AddTopup() {
   const [loading, setLoading] = useState(false);
   const [plans, setPlans] = useState([]);
 
-  const { addTopUpPlan, getTopupPlans } = useMetaDataStore();
+  const { addTopUpPlan, getTopupPlans, deleteTopUpPlan } = useMetaDataStore();
   const {
     isPureString,
     formatTextCasing,
     objectArrayContainsValue,
+    showConfirmDialog,
   } = useUtility();
 
   useEffect(() => {
@@ -95,6 +96,21 @@ export default function AddTopup() {
       price: planPriceRef.current.value,
     };
     return planOBj;
+  }
+
+  async function handleDeletePlan(planName) {
+    console.log("handle delete plan: " + planName);
+    const userConsent = showConfirmDialog("Do you want to remove the plan ?");
+    if (userConsent) {
+      try {
+        await deleteTopUpPlan(planName.toLowerCase());
+        setPlans(plans.filter((item) => item.name !== planName));
+        setMessage(planName + " removed succesfully");
+      } catch (err) {
+        console.log("error deleteing plan : " + err.message);
+        setError(err.message);
+      }
+    }
   }
 
   function renderPlanForm() {
@@ -178,7 +194,10 @@ export default function AddTopup() {
     <div>
       {renderPlanForm()}
       <hr></hr>
-      <TopupPlanListView plans={plans}></TopupPlanListView>
+      <TopupPlanListView
+        plans={plans}
+        deletePlanCallback={handleDeletePlan}
+      ></TopupPlanListView>
     </div>
   );
 }
