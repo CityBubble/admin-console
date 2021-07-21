@@ -64,6 +64,18 @@ function formatCaseForCommaSeparatedItems(text) {
   return refinedTextArr;
 }
 
+function trimCommaSeparatedItemsToArray(text) {
+  const rawTextArr = text.split(",");
+  let refinedTextArr = [];
+  for (let i = 0; i < rawTextArr.length; i++) {
+    const val = rawTextArr[i].trim();
+    if (val.length > 0) {
+      refinedTextArr.push(val);
+    }
+  }
+  return refinedTextArr;
+}
+
 function scrollToTop() {
   window.scrollTo({
     top: 0,
@@ -104,7 +116,28 @@ function extractTermsArrFromInputDescription(desc) {
     }
   }
   return finalArr;
-};
+}
+
+function objectArrayContainsValue(arr, prop, val, compareNumbers = false) {
+  if (Array.isArray(arr)) {
+    if (compareNumbers) {
+      return arr.some((item) => item[prop] === val);
+    } else {
+      val = val.trim().toLowerCase();
+      return arr.some((item) => item[prop].toLowerCase() === val);
+    }
+  }
+  console.log("Not an array");
+  return false;
+}
+
+function removeObjectFromArr(arr, prop, val) {
+  if (Array.isArray(arr)) {
+    return arr.filter((item) => item[prop] !== val);
+  }
+  console.log("Not an array");
+  return [];
+}
 
 const actions = {
   isPureString,
@@ -118,4 +151,7 @@ const actions = {
   getOfferTypesArr,
   arraysEqual,
   extractTermsArrFromInputDescription,
+  objectArrayContainsValue,
+  removeObjectFromArr,
+  trimCommaSeparatedItemsToArray,
 };

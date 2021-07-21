@@ -42,6 +42,9 @@ export default function Dashboard() {
         <Link to="/review" className="btn btn-secondary w-100 mt-3">
           Review Actions
         </Link>
+        <Link to="/meta" className="btn btn-dark w-100 mt-3">
+          MetaData Actions
+        </Link>
         <hr />
         <Button className="w-100 btn-danger" onClick={handleLogOut}>
           Log Out

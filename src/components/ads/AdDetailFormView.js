@@ -386,6 +386,9 @@ export default class AdDetailFormView extends Component {
         adObj.ad_status.status = Constants.ADS_ACTIVE_STATUS;
         delete adObj.timeline.freeze_date;
         break;
+      default:
+        console.log("non-supported action = " + action);
+        break;
     }
     return adObj;
   };
@@ -688,8 +691,9 @@ export default class AdDetailFormView extends Component {
                   if (!(expiryDate instanceof Date)) {
                     expiryDate = expiryDate.toDate();
                   }
-                  this.expiryDateString =
-                    this.props.formatDateToInputField(expiryDate);
+                  this.expiryDateString = this.props.formatDateToInputField(
+                    expiryDate
+                  );
                 }}
               >
                 Edit

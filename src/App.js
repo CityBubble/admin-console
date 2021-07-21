@@ -19,6 +19,12 @@ import ModifyAd from "./screens/ads/ModifyAd";
 import ReviewActions from "./screens/review/ReviewActions";
 import ReviewVendorProfile from "./screens/review/ReviewVendorProfile";
 import ReviewAd from "./screens/review/ReviewAd";
+import MetaActions from "./screens/meta/MetaActions";
+import AddCity from "./screens/meta/AddCity";
+import AddParent from "./screens/meta/AddParent";
+import AddCategory from "./screens/meta/AddCategory";
+import AddTopup from "./screens/meta/AddTopup";
+import AddVendorSubscription from "./screens/meta/AddVendorSubscription";
 
 function App() {
   return (
@@ -56,10 +62,14 @@ function App() {
                 path="/reviewVendor"
                 component={ReviewVendorProfile}
               />
-              <SecureRoute
-                path="/reviewAd"
-                component={ReviewAd}
-              />
+              <SecureRoute path="/reviewAd" component={ReviewAd} />
+
+              <SecureRoute path="/meta" component={MetaActions} />
+              <SecureRoute path="/addCity" component={AddCity} />
+              <SecureRoute path="/addParent" component={AddParent} />
+              <SecureRoute path="/addCategory" component={AddCategory} />
+              <SecureRoute path="/addTopup" component={AddTopup} />
+              <SecureRoute path="/addSubscription" component={AddVendorSubscription} />
             </Switch>
           </AuthProvider>
         </Router>

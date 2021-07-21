@@ -37,19 +37,6 @@ function getSubscriptionStatusTextColor(status) {
   }
 }
 
-function getPriorityText(priority) {
-  switch (priority) {
-    case Constants.PRIORITY_ELITE:
-      return "High (Elite)";
-    case Constants.PRIORITY_PREMIUM:
-      return "Medium (Premium)";
-    case Constants.PRIORITY_STANDARD:
-      return "Low (Basic)";
-    default:
-      return "Unknown";
-  }
-}
-
 function convertArrayToText(items) {
   if (!items || items.length === 0) {
     return "N/A";
@@ -60,6 +47,5 @@ function convertArrayToText(items) {
 const actions = {
   getStatusTextColor,
   getSubscriptionStatusTextColor,
-  getPriorityText,
   convertArrayToText,
 };
