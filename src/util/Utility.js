@@ -118,13 +118,25 @@ function extractTermsArrFromInputDescription(desc) {
   return finalArr;
 }
 
-function objectArrayContainsValue(arr, prop, val) {
+function objectArrayContainsValue(arr, prop, val, compareNumbers = false) {
   if (Array.isArray(arr)) {
-    val = val.trim().toLowerCase();
-    return arr.some((item) => item[prop].toLowerCase() === val);
+    if (compareNumbers) {
+      return arr.some((item) => item[prop] === val);
+    } else {
+      val = val.trim().toLowerCase();
+      return arr.some((item) => item[prop].toLowerCase() === val);
+    }
   }
   console.log("Not an array");
   return false;
+}
+
+function removeObjectFromArr(arr, prop, val) {
+  if (Array.isArray(arr)) {
+    return arr.filter((item) => item[prop] !== val);
+  }
+  console.log("Not an array");
+  return [];
 }
 
 const actions = {
@@ -140,5 +152,6 @@ const actions = {
   arraysEqual,
   extractTermsArrFromInputDescription,
   objectArrayContainsValue,
+  removeObjectFromArr,
   trimCommaSeparatedItemsToArray,
 };

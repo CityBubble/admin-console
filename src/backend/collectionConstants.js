@@ -2,6 +2,7 @@ module.exports = Object.freeze({
   COLL_INTERNAL_USERS: "internal_users",
   COLL_CITIES: "cities",
   COLL_CATEGORIES: "categories",
+  COLL_SUBSCRIPTIONS: "subscriptions",
   COLL_TOPUPS: "topups",
   SUB_COLL_VENDORS: "vendors",
   SUB_COLL_ADS: "ads",

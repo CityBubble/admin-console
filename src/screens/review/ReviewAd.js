@@ -5,7 +5,7 @@ import { useAdService } from "../../backend/restService/adServiceProxy";
 import AdReviewFormView from "../../components/review/AdReviewFormView";
 import { useAuth } from "../../context/AuthContext";
 import { useUtility } from "../../util/Utility";
-import { useUIUtility } from "../../util/UIUtility";
+import { useConfig } from "../../util/Config";
 
 export default function ReviewAd() {
   const cityRef = useRef();
@@ -22,11 +22,10 @@ export default function ReviewAd() {
     scrollToTop,
     showConfirmDialog,
     dateToInputFieldString,
-    getOfferTypesArr,
     extractTermsArrFromInputDescription,
   } = useUtility();
 
-  const { getPriorityText } = useUIUtility();
+  const { getOfferTypesArr, getPriorityText } = useConfig();
 
   function clearMessageFields() {
     setError("");

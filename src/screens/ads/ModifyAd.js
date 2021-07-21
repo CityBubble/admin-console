@@ -6,6 +6,7 @@ import AdDetailFormView from "../../components/ads/AdDetailFormView";
 import { useAuth } from "../../context/AuthContext";
 import { useUtility } from "../../util/Utility";
 import { useUIUtility } from "../../util/UIUtility";
+import { useConfig } from "../../util/Config";
 
 export default function ModifyAd() {
   const getVendorAdFormRef = useRef();
@@ -26,12 +27,15 @@ export default function ModifyAd() {
     scrollToTop,
     showConfirmDialog,
     dateToInputFieldString,
-    getOfferTypesArr,
     arraysEqual,
     extractTermsArrFromInputDescription,
   } = useUtility();
-  const { convertArrayToText, getPriorityText, getStatusTextColor } =
-    useUIUtility();
+  const {
+    convertArrayToText,
+    getPriorityText,
+    getStatusTextColor,
+  } = useUIUtility();
+  const { getOfferTypesArr } = useConfig();
 
   async function handleGetVendorAdsSubmit(e) {
     console.log("handleGetVendorAdsSubmit");

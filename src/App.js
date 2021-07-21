@@ -24,6 +24,7 @@ import AddCity from "./screens/meta/AddCity";
 import AddParent from "./screens/meta/AddParent";
 import AddCategory from "./screens/meta/AddCategory";
 import AddTopup from "./screens/meta/AddTopup";
+import AddVendorSubscription from "./screens/meta/AddVendorSubscription";
 
 function App() {
   return (
@@ -68,6 +69,7 @@ function App() {
               <SecureRoute path="/addParent" component={AddParent} />
               <SecureRoute path="/addCategory" component={AddCategory} />
               <SecureRoute path="/addTopup" component={AddTopup} />
+              <SecureRoute path="/addSubscription" component={AddVendorSubscription} />
             </Switch>
           </AuthProvider>
         </Router>

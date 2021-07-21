@@ -77,7 +77,9 @@ export default function AddTopup() {
       return false;
     }
 
-    if (objectArrayContainsValue(plans, "coupons", couponsRef.current.value)) {
+    if (
+      objectArrayContainsValue(plans, "coupons", couponsRef.current.value, true)
+    ) {
       setError("plan with similar coupons already exists");
       return false;
     }
@@ -92,8 +94,8 @@ export default function AddTopup() {
   function constructPlanObj() {
     let planOBj = {
       name: formatTextCasing(planNameRef.current.value),
-      coupons: couponsRef.current.value,
-      price: planPriceRef.current.value,
+      coupons: parseInt(couponsRef.current.value),
+      price: parseInt(planPriceRef.current.value),
     };
     return planOBj;
   }

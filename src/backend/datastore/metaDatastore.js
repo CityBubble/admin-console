@@ -17,6 +17,13 @@ function getTopupCollectionRef() {
   return db.collection(Collection.COLL_TOPUPS);
 }
 
+function getSubscriptionCollectionRef(cityCode) {
+  return db
+    .collection(Collection.COLL_CITIES)
+    .doc(cityCode)
+    .collection(Collection.COLL_SUBSCRIPTIONS);
+}
+
 async function addCity(cityObj) {
   console.log("addCity for " + JSON.stringify(cityObj));
   if (!cityObj) {
@@ -142,7 +149,7 @@ async function addTopUpPlan(planObj) {
 async function getTopupPlans() {
   console.log("getTopupPlans");
   const topupCollRef = getTopupCollectionRef();
-  const snapshot = await topupCollRef.get();
+  const snapshot = await topupCollRef.orderBy("coupons").get();
 
   let plans = [];
   snapshot.forEach((doc) => {
@@ -160,6 +167,48 @@ async function deleteTopUpPlan(planName) {
   console.log("Plan deleted successfully");
 }
 
+async function getSubscriptions(cityCode) {
+  console.log("getSubscriptions for cityCode= " + cityCode);
+  if (!cityCode) {
+    throw new Error("invalid city code");
+  }
+  const subscriptionCollRef = getSubscriptionCollectionRef(cityCode);
+  const snapshot = await subscriptionCollRef.orderBy("priority").get();
+
+  let subscriptions = [];
+  snapshot.forEach((doc) => {
+    subscriptions.push(doc.data());
+  });
+  console.log("Subscriptions returned= " + subscriptions.length);
+  return subscriptions;
+}
+
+async function addSubscription(cityCode, subscriptionObj) {
+  console.log("addSubscription  for city: " + cityCode);
+  if (!subscriptionObj) {
+    throw new Error("invalid plan Obj");
+  }
+  const subscriptionCollRef = getSubscriptionCollectionRef(cityCode);
+  const subscriptionDocRef = subscriptionCollRef.doc(
+    subscriptionObj.name.toLowerCase()
+  );
+  await subscriptionDocRef.set(subscriptionObj);
+  console.log("New subscription added successfully");
+}
+
+async function removeSubscription(cityCode, subscriptionName) {
+  console.log("removeSubscription for " + subscriptionName);
+  if (!subscriptionName) {
+    throw new Error("invalid plan name");
+  }
+  const subscriptionCollRef = getSubscriptionCollectionRef(cityCode);
+  const subscriptionDocRef = subscriptionCollRef.doc(
+    subscriptionName.toLowerCase()
+  );
+  await subscriptionDocRef.delete();
+  console.log("Subscription deleted successfully");
+}
+
 const actions = {
   addCity,
   getCities,
@@ -170,5 +219,8 @@ const actions = {
   addCategoryKeywords,
   addTopUpPlan,
   getTopupPlans,
-  deleteTopUpPlan
+  deleteTopUpPlan,
+  getSubscriptions,
+  addSubscription,
+  removeSubscription
 };
