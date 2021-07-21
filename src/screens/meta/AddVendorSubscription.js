@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { Link } from "react-router-dom";
 import { Alert, Button, Card, Form } from "react-bootstrap";
 import { useMetaDataStore } from "../../backend/datastore/metaDatastore";
 import SubscriptionsListView from "../../components/meta/SubscriptionsListView";
@@ -80,6 +81,9 @@ export default function AddVendorSubscription() {
               Get Subscriptions
             </Button>
           </Form>
+          <div className="w-100 text-center mt-3">
+            <Link to="/meta">Back</Link>
+          </div>
         </Card.Body>
       </Card>
     );
